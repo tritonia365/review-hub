@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>REAL-REVIEW01</title>
+<meta name="description" content="서울에서 기념일·생일에 갈 곳, 광고 없는 진짜 후기로만 고르세요. 리얼 테이블 회원가입.">
+<meta name="theme-color" content="#FDFBF4">
+
+<meta property="og:title" content="리얼 테이블 — 광고 빼고, 진짜 테이블만">
+<meta property="og:description" content="서울에서 기념일·생일에 갈 곳, 협찬 없는 후기로만 고르세요.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "리얼 테이블",
+  "alternateName": "Real Table",
+  "url": "https://realtable.kr/",
+  "description": "서울 기념일 맛집, 광고 없는 진짜 후기만.",
+  "inLanguage": "ko"
+}
+</script>
+
+<style>
+/* ============================================================
+   REAL-REVIEW01 — 리얼 테이블 랜딩페이지
+   DESIGN.md v1.0 토큰 체계 (PRD §3 대체) 기준
+   ============================================================ */
+
+:root {
+  /* Base — 종이 */
+  --rt-paper:        #FDFBF4;
+  --rt-paper-deep:   #F7F3E8;
+  --rt-paper-pure:   #FFFFFF;
+
+  /* Ink — 텍스트 */
+  --rt-ink:          #1C1B17;
+  --rt-ink-70:       #55534B;
+  --rt-ink-50:       #85827A;
+  --rt-ink-30:       #B5B2A8;
+  --rt-line:         #E5E0D3;
+  --rt-line-soft:    #F0ECE0;
+
+  /* Brand — 행동 */
+  --rt-yellow:       #FFE94F;
+  --rt-yellow-deep:  #EBD33A;
+  --rt-yellow-wash:  #FFF8CC;
+
+  /* Gold — 성취 (훈장 전용) */
+  --rt-gold:         #C9A227;
+  --rt-silver:       #9A9A94;
+  --rt-bronze:       #A9713F;
+
+  /* Semantic */
+  --rt-red:          #C0392B;
+  --rt-red-wash:     #FBEFED;
+  --rt-green:        #2F7D4F;
+  --rt-green-wash:   #EDF5F0;
+
+  /* Type */
+  --rt-font-display: "Noto Serif KR", "Nanum Myeongjo", "Apple SD Gothic Neo", serif;
+  --rt-font-body: "Pretendard Variable", Pretendard, -apple-system,
+                  BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo",
+                  "Noto Sans KR", sans-serif;
+
+  /* Space */
+  --rt-space-1:4px;  --rt-space-2:8px;   --rt-space-3:12px;
+  --rt-space-4:16px; --rt-space-5:24px;  --rt-space-6:32px;
+  --rt-space-7:48px; --rt-space-8:64px;  --rt-space-9:96px;
+  --rt-space-10:128px;
+
+  /* Radius */
+  --rt-radius-sm:6px;  --rt-radius-md:10px; --rt-radius-lg:14px;
+  --rt-radius-xl:20px; --rt-radius-full:999px;
+
+  /* Shadow */
+  --rt-shadow-sm: 0 1px 2px rgba(28,27,23,.04);
+  --rt-shadow-md: 0 4px 16px rgba(28,27,23,.07);
+  --rt-shadow-lg: 0 12px 40px rgba(28,27,23,.10);
+
+  /* Motion */
+  --rt-dur-fast:150ms; --rt-dur-base:250ms;
+  --rt-dur-slow:450ms; --rt-dur-draw:800ms;
+  --rt-ease-out: cubic-bezier(.22,1,.36,1);
+  --rt-ease-soft: cubic-bezier(.4,0,.2,1);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--rt-paper);
+  color: var(--rt-ink);
+  font-family: var(--rt-font-body);
+  font-size: 15px;
+  line-height: 1.75;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; }
+a { color: inherit; }
+
+h1, h2, h3, .display, .quote {
+  font-family: var(--rt-font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.numeric {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+@media (min-width: 1024px) {
+  .container { padding: 0 40px; }
+}
+
+section { padding: 64px 0; }
+@media (min-width: 1024px) {
+  section { padding: 128px 0; }
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--rt-ink-50);
+  text-transform: uppercase;
+}
+
+.section-head { max-width: 640px; margin: 0 0 40px; }
+.section-head h2 {
+  font-size: 24px;
+  line-height: 1.4;
+  margin-top: 8px;
+}
+@media (min-width: 1024px) {
+  .section-head h2 { font-size: 34px; }
+}
+.section-head p {
+  margin-top: 12px;
+  color: var(--rt-ink-70);
+}
+
+/* ---------- Reveal motion ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--rt-dur-slow) var(--rt-ease-out),
+              transform var(--rt-dur-slow) var(--rt-ease-out);
+}
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 20px;
+  border-radius: var(--rt-radius-md);
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background var(--rt-dur-fast) var(--rt-ease-soft),
+              transform var(--rt-dur-fast) var(--rt-ease-soft),
+              border-color var(--rt-dur-fast) var(--rt-ease-soft);
+  white-space: nowrap;
+}
+@media (min-width: 1024px) { .btn { height: 44px; } }
+
+.btn-primary {
+  background: var(--rt-yellow);
+  color: var(--rt-ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover { background: var(--rt-yellow-deep); transform: translateY(-1px); }
+}
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-secondary {
+  background: var(--rt-paper-pure);
+  color: var(--rt-ink);
+  border: 1.5px solid var(--rt-ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-secondary:hover { border-color: var(--rt-ink); background: var(--rt-paper-deep); }
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--rt-ink);
+  outline-offset: 2px;
+}
+
+/* ---------- Badge / chip ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--rt-radius-full);
+  border: 1px solid var(--rt-line);
+  background: var(--rt-paper-pure);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--rt-ink-70);
+}
+.badge-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--rt-green);
+  flex: none;
+}
+
+/* ============================================================
+   Header
+   ============================================================ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(253,251,244,0.92);
+  backdrop-filter: saturate(180%) blur(8px);
+  border-bottom: 1px solid var(--rt-line-soft);
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+.logo {
+  font-family: var(--rt-font-display);
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.logo .ko { font-size: 19px; }
+.logo .en {
+  font-family: var(--rt-font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--rt-ink-50);
+  text-transform: uppercase;
+}
+.site-header .btn-primary { height: 40px; padding: 0 16px; font-size: 14px; }
+
+/* ============================================================
+   Hero (S1)
+   ============================================================ */
+.hero {
+  padding: 56px 0 64px;
+  background: var(--rt-paper);
+}
+@media (min-width: 1024px) { .hero { padding: 96px 0 112px; } }
+
+.hero-inner { max-width: 720px; }
+
+.hero .eyebrow { color: var(--rt-ink-70); }
+
+.hero h1 {
+  margin-top: 14px;
+  font-size: 32px;
+  line-height: 1.35;
+}
+@media (min-width: 1024px) { .hero h1 { font-size: 52px; } }
+
+.hero-sub {
+  margin-top: 20px;
+  font-size: 16px;
+  color: var(--rt-ink-70);
+  line-height: 1.7;
+  max-width: 34em;
+}
+@media (min-width: 1024px) { .hero-sub { font-size: 18px; } }
+
+.field-input {
+  flex: 1;
+  height: 48px;
+  padding: 0 16px;
+  font-size: 16px;
+  font-family: var(--rt-font-body);
+  border-radius: var(--rt-radius-md);
+  border: 1.5px solid var(--rt-line);
+  background: var(--rt-paper-pure);
+  color: var(--rt-ink);
+}
+.field-input::placeholder { color: var(--rt-ink-30); }
+.field-input:focus {
+  outline: none;
+  border-color: var(--rt-ink);
+  box-shadow: 0 0 0 3px var(--rt-yellow-wash);
+}
+
+.hero-note {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--rt-ink-50);
+}
+
+.hero-badges {
+  margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.field-error {
+  font-size: 13px;
+  color: var(--rt-red);
+  margin-top: -2px;
+  display: none;
+}
+.field-error.is-active { display: block; }
+.field-input.is-error {
+  border-color: var(--rt-red);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .field-input.is-error { animation: shake 200ms; }
+}
+@keyframes shake {
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* ============================================================
+   S2 — 문제 제기
+   ============================================================ */
+.problem-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 640px;
+}
+.problem-lines p {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--rt-ink-70);
+  padding-left: 20px;
+  border-left: 2px solid var(--rt-line);
+}
+@media (min-width: 1024px) {
+  .problem-lines p { font-size: 22px; }
+}
+.problem-lines p strong { color: var(--rt-ink); font-weight: 600; }
+
+/* ============================================================
+   S3 — 원칙 3카드
+   ============================================================ */
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 768px) {
+  .grid-3 { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+}
+
+.principle-card {
+  background: var(--rt-paper-pure);
+  border: 1px solid var(--rt-line);
+  border-radius: var(--rt-radius-lg);
+  padding: 28px 24px;
+}
+.principle-num {
+  font-family: var(--rt-font-body);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--rt-ink-30);
+  letter-spacing: 0.04em;
+}
+.principle-card h3 {
+  font-family: var(--rt-font-body);
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 10px;
+}
+.principle-card p {
+  margin: 10px 0 0;
+  color: var(--rt-ink-70);
+  font-size: 14px;
+}
+
+/* ============================================================
+   S4 — 이럴 때 씁니다
+   ============================================================ */
+.usecase-card {
+  background: var(--rt-paper-deep);
+  border-radius: var(--rt-radius-lg);
+  padding: 32px 24px;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.usecase-card .glyph {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rt-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+.usecase-card h3 {
+  font-family: var(--rt-font-display);
+  font-size: 20px;
+  font-weight: 600;
+}
+.usecase-card p {
+  margin: 8px 0 0;
+  color: var(--rt-ink-70);
+  font-size: 14px;
+}
+
+/* ============================================================
+   S5 — 신뢰 구조
+   ============================================================ */
+.trust-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+@media (min-width: 900px) {
+  .trust-flow { flex-direction: row; align-items: stretch; }
+}
+.trust-step {
+  flex: 1;
+  display: flex;
+  gap: 16px;
+  padding: 20px 0;
+}
+@media (min-width: 900px) {
+  .trust-step { flex-direction: column; gap: 12px; padding: 0 20px; }
+}
+.trust-step:not(:last-child) {
+  border-bottom: 1px solid var(--rt-line);
+}
+@media (min-width: 900px) {
+  .trust-step:not(:last-child) {
+    border-bottom: none;
+    border-right: 1px dashed var(--rt-line);
+  }
+}
+.trust-ring {
+  flex: none;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rt-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--rt-font-body);
+  font-weight: 700;
+  font-size: 15px;
+}
+.trust-step h3 {
+  font-family: var(--rt-font-body);
+  font-size: 15px;
+  font-weight: 600;
+}
+.trust-step p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--rt-ink-70);
+}
+.trust-arrow {
+  display: none;
+  align-items: center;
+  color: var(--rt-ink-30);
+  padding: 0 4px;
+}
+@media (min-width: 900px) {
+  .trust-arrow { display: flex; }
+}
+
+/* ============================================================
+   S6 — 인사이트 미리보기 (도넛차트 + 워드클라우드)
+   ============================================================ */
+.sample-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--rt-ink-50);
+  background: var(--rt-paper-deep);
+  border-radius: var(--rt-radius-sm);
+  padding: 4px 8px;
+  margin-bottom: 8px;
+}
+
+.insight-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 900px) {
+  .insight-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.insight-card {
+  background: var(--rt-paper-pure);
+  border: 1px solid var(--rt-line);
+  border-radius: var(--rt-radius-lg);
+  padding: 24px;
+}
+.insight-card h3 {
+  font-family: var(--rt-font-body);
+  font-size: 16px;
+  font-weight: 600;
+}
+.insight-card > p.desc {
+  font-size: 13px;
+  color: var(--rt-ink-50);
+  margin: 4px 0 20px;
+}
+
+/* Donut */
+.donut-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+@media (min-width: 480px) {
+  .donut-wrap { flex-direction: row; justify-content: center; }
+}
+.donut {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  flex: none;
+  background: conic-gradient(var(--rt-line) 0% 100%);
+}
+.donut::after {
+  content: "";
+  position: absolute;
+  inset: 22px;
+  border-radius: 50%;
+  background: var(--rt-paper-pure);
+}
+.donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.donut-center .val {
+  font-family: var(--rt-font-body);
+  font-weight: 700;
+  font-size: 32px;
+}
+.donut-center .cnt {
+  font-size: 12px;
+  color: var(--rt-ink-50);
+  margin-top: 2px;
+}
+
+.donut-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.donut-legend li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--rt-ink-70); }
+.donut-legend .swatch { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+.donut-legend .amt { margin-left: auto; font-weight: 600; color: var(--rt-ink); }
+
+.toggle-table-btn {
+  margin-top: 16px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--rt-ink-70);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.data-table {
+  display: none;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+}
+.data-table.is-active { display: table; }
+.data-table th, .data-table td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--rt-line-soft);
+}
+.data-table th { color: var(--rt-ink-50); font-weight: 500; }
+.data-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Word cloud */
+.wordcloud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  min-height: 180px;
+  padding: 8px 0;
+}
+.wordcloud span {
+  font-family: var(--rt-font-body);
+  font-weight: 600;
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity var(--rt-dur-slow) var(--rt-ease-out),
+              transform var(--rt-dur-slow) var(--rt-ease-out);
+}
+.wordcloud.is-visible span {
+  opacity: 1;
+  transform: scale(1);
+}
+.wordcloud span.top { color: var(--rt-gold); }
+
+.keyword-list-btn {
+  margin-top: 14px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--rt-ink-70);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.keyword-table { display: none; margin-top: 12px; }
+.keyword-table.is-active { display: block; }
+
+/* ============================================================
+   S7 — 빌보드 예고
+   ============================================================ */
+.billboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 900px) {
+  .billboard-grid { grid-template-columns: 1fr 1fr; }
+}
+.bb-panel {
+  background: var(--rt-paper-pure);
+  border: 1px solid var(--rt-line);
+  border-radius: var(--rt-radius-lg);
+  padding: 24px;
+}
+.bb-panel h3 {
+  font-family: var(--rt-font-body);
+  font-size: 16px;
+  font-weight: 600;
+}
+.bb-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rt-line-soft);
+}
+.bb-row:last-child { border-bottom: none; }
+.bb-rank {
+  flex: none;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+  background: var(--rt-paper-deep);
+  color: var(--rt-ink-70);
+}
+.bb-row.first .bb-rank {
+  background: linear-gradient(180deg, #E3C766, #A8841C);
+  color: var(--rt-paper-pure);
+  border: 1px solid #8C6D14;
+}
+.bb-avatar {
+  flex: none;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--rt-paper-deep), var(--rt-line));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.bb-name { font-size: 14px; font-weight: 600; }
+.bb-meta { font-size: 12px; color: var(--rt-ink-50); }
+.bb-score { margin-left: auto; font-size: 13px; font-weight: 600; color: var(--rt-ink-70); white-space: nowrap; }
+
+.bb-footnote {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--rt-ink-50);
+}
+
+/* ============================================================
+   S8 — 로드맵
+   ============================================================ */
+.roadmap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-left: 2px solid var(--rt-line);
+  margin-left: 6px;
+}
+.roadmap-item {
+  position: relative;
+  padding: 0 0 40px 28px;
+}
+.roadmap-item:last-child { padding-bottom: 0; }
+.roadmap-item::before {
+  content: "";
+  position: absolute;
+  left: -7px; top: 2px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--rt-paper);
+  border: 2px solid var(--rt-ink-30);
+}
+.roadmap-item.is-current::before {
+  border-color: var(--rt-ink);
+  background: var(--rt-yellow);
+}
+.roadmap-item .tag {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--rt-ink-50);
+}
+.roadmap-item.is-current .tag { color: var(--rt-ink); }
+.roadmap-item h3 {
+  font-family: var(--rt-font-body);
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.roadmap-item p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--rt-ink-70);
+  max-width: 480px;
+}
+
+/* ============================================================
+   S9 — 사전 등록 CTA (재노출)
+   ============================================================ */
+.signup-section {
+  background: var(--rt-paper-deep);
+  border-radius: var(--rt-radius-xl);
+  padding: 40px 24px;
+  margin: 0 20px;
+}
+@media (min-width: 1024px) {
+  .signup-section { padding: 64px; margin: 0 40px; }
+}
+.signup-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+.signup-inner h2 { font-size: 26px; }
+@media (min-width: 1024px) { .signup-inner h2 { font-size: 36px; } }
+.signup-inner > p {
+  margin-top: 10px;
+  color: var(--rt-ink-70);
+  max-width: 46em;
+}
+
+.consent-row {
+  margin-top: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.consent-row input[type="checkbox"] {
+  margin-top: 3px;
+  width: 18px; height: 18px;
+  accent-color: var(--rt-ink);
+  flex: none;
+}
+.consent-row label {
+  font-size: 13px;
+  color: var(--rt-ink-70);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   S10 — FAQ
+   ============================================================ */
+.faq-list {
+  border-top: 1px solid var(--rt-line);
+  max-width: 760px;
+}
+.faq-item { border-bottom: 1px solid var(--rt-line); }
+.faq-q {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 20px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--rt-ink);
+}
+.faq-q .plus {
+  flex: none;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rt-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  transition: transform var(--rt-dur-base) var(--rt-ease-soft);
+}
+.faq-item.is-open .faq-q .plus { transform: rotate(45deg); }
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--rt-dur-base) var(--rt-ease-soft);
+}
+.faq-a p {
+  padding: 0 4px 20px;
+  margin: 0;
+  color: var(--rt-ink-70);
+  font-size: 14px;
+  max-width: 62ch;
+}
+.faq-q:focus-visible { outline: 2px solid var(--rt-ink); outline-offset: 2px; }
+
+/* ============================================================
+   Footer (S11)
+   ============================================================ */
+.site-footer {
+  border-top: 1px solid var(--rt-line);
+  padding: 48px 0 64px;
+  background: var(--rt-paper-deep);
+}
+.footer-top {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  justify-content: space-between;
+}
+@media (min-width: 768px) {
+  .footer-top { flex-direction: row; align-items: flex-start; }
+}
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  font-size: 13px;
+  color: var(--rt-ink-70);
+}
+.footer-links a { text-decoration: none; }
+.footer-links a:hover { text-decoration: underline; }
+.footer-bottom {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rt-line);
+  font-size: 12px;
+  color: var(--rt-ink-50);
+  line-height: 1.8;
+}
+
+/* ---------- Misc ---------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Ensure minimum touch target */
+button, a.btn, .faq-q { min-height: 44px; }
+
+@media (min-width: 1024px) {
+  .stagger > * { transition-delay: calc(var(--i, 0) * 60ms); }
+}
+
+/* ============================================================
+   Auth — header state, modals, admin panel
+   ============================================================ */
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.user-chip { font-size: 14px; font-weight: 600; color: var(--rt-ink); white-space: nowrap; }
+
+.btn-ghost {
+  background: none;
+  border: none;
+  color: var(--rt-ink-70);
+  font-weight: 500;
+  height: auto;
+  padding: 0 12px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-ghost:hover { background: var(--rt-paper-deep); border-radius: var(--rt-radius-md); }
+}
+
+.hero-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28,27,23,0.55);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay[hidden] { display: none; }
+
+.modal {
+  background: var(--rt-paper-pure);
+  border-radius: var(--rt-radius-xl);
+  padding: 32px 28px;
+  max-width: 400px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: var(--rt-shadow-lg);
+}
+.modal[hidden] { display: none; }
+.modal h2 { font-size: 22px; margin-bottom: 20px; }
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--rt-line);
+  background: var(--rt-paper-pure);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--rt-ink-70);
+}
+
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+
+.modal-switch { margin-top: 16px; font-size: 13px; color: var(--rt-ink-70); text-align: center; }
+.link-btn {
+  background: none; border: none; padding: 0;
+  font-weight: 600; color: var(--rt-ink);
+  text-decoration: underline; cursor: pointer;
+  font-size: inherit;
+}
+.modal-hint { margin-top: 14px; font-size: 12px; color: var(--rt-ink-50); text-align: center; }
+
+#admin-panel { background: var(--rt-paper-deep); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="#hero" class="logo" aria-label="리얼 테이블 홈으로">
+      <span class="ko">리얼 테이블</span>
+      <span class="en">Real Table</span>
+    </a>
+    <div class="header-actions" id="auth-actions-guest">
+      <button type="button" class="btn btn-ghost" id="open-login">로그인</button>
+      <button type="button" class="btn btn-primary" id="open-signup">회원가입</button>
+    </div>
+    <div class="header-actions" id="auth-actions-user" hidden>
+      <span class="user-chip" id="user-chip"></span>
+      <button type="button" class="btn btn-secondary" id="open-admin" hidden>관리자 화면</button>
+      <button type="button" class="btn btn-ghost" id="logout-btn">로그아웃</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= S1. Hero ================= -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <p class="eyebrow">광고 빼고, 진짜 테이블만</p>
+        <h1>오늘은<br>실패하면 안 되는 날이니까</h1>
+        <p class="hero-sub">서울에서 기념일·생일에 갈 곳, 협찬 없는 후기로만 고르세요.</p>
+
+        <div class="hero-cta-row">
+          <button type="button" class="btn btn-primary" id="hero-open-signup">회원가입하고 시작하기</button>
+          <button type="button" class="btn btn-secondary" id="hero-open-login">로그인</button>
+        </div>
+
+        <p class="hero-note">광고를 팔지 않습니다. 순위는 돈으로 살 수 없습니다.</p>
+
+        <div class="hero-badges">
+          <span class="badge"><span class="badge-dot" aria-hidden="true"></span> 서울특별시 전용</span>
+          <span class="badge">광고 없는 후기</span>
+          <span class="badge">이메일 인증 · 관리자 검수</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S2. 문제 제기 ================= -->
+  <section id="problem">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">검색하면 다 광고 같을 때</p>
+        <h2>정보가 없는 게 아니라,<br>믿을 수가 없어서 미루는 겁니다.</h2>
+      </div>
+      <div class="problem-lines">
+        <p class="reveal"><strong>인스타에 저장한 곳은</strong> 이미 협찬 표시가 붙어 있고</p>
+        <p class="reveal"><strong>블로그는 어디까지가</strong> 광고인지 구분이 안 되고</p>
+        <p class="reveal"><strong>결국 탭 스무 개를 켜둔 채</strong> 익숙한 곳으로 되돌아갑니다</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S3. 우리의 원칙 ================= -->
+  <section id="principles">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">우리의 원칙</p>
+        <h2>기능보다 먼저 정한 세 가지</h2>
+      </div>
+      <div class="grid-3 stagger">
+        <div class="principle-card reveal" style="--i:0">
+          <span class="principle-num numeric">01</span>
+          <h3>광고를 팔지 않는다</h3>
+          <p>노출 순위는 어떤 경우에도 금전으로 구매할 수 없습니다.</p>
+        </div>
+        <div class="principle-card reveal" style="--i:1">
+          <span class="principle-num numeric">02</span>
+          <h3>익명이되 무책임하지 않다</h3>
+          <p>신원은 가리되, 행위는 전부 추적하고 관리합니다.</p>
+        </div>
+        <div class="principle-card reveal" style="--i:2">
+          <span class="principle-num numeric">03</span>
+          <h3>사진과 글이 전부다</h3>
+          <p>동영상·GIF·음성 없이, 정보 밀도를 지킵니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S4. 이럴 때 씁니다 ================= -->
+  <section id="usecases">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">이럴 때 씁니다</p>
+        <h2>1년에 몇 번뿐인 그 자리</h2>
+      </div>
+      <div class="grid-3 stagger">
+        <div class="usecase-card reveal" style="--i:0">
+          <span class="glyph" aria-hidden="true">◐</span>
+          <h3>기념일</h3>
+          <p>1년에 한 번, 실패하면 안 되는 날.</p>
+        </div>
+        <div class="usecase-card reveal" style="--i:1">
+          <span class="glyph" aria-hidden="true">◑</span>
+          <h3>생일</h3>
+          <p>그 사람이 오래 기억할 저녁 한 끼.</p>
+        </div>
+        <div class="usecase-card reveal" style="--i:2">
+          <span class="glyph" aria-hidden="true">◒</span>
+          <h3>특별한 날</h3>
+          <p>상견례, 프러포즈, 오랜만의 모임.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S5. 신뢰 구조 ================= -->
+  <section id="trust">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">신뢰 구조</p>
+        <h2>익명이 신뢰가 되는 과정</h2>
+        <p>표면은 익명이지만, 등록부터 게시까지 모든 단계가 검증됩니다.</p>
+      </div>
+      <div class="trust-flow reveal">
+        <div class="trust-step">
+          <span class="trust-ring numeric">1</span>
+          <div>
+            <h3>이메일 인증</h3>
+            <p>인증된 계정만 리뷰를 작성할 수 있어요.</p>
+          </div>
+        </div>
+        <div class="trust-arrow" aria-hidden="true">→</div>
+        <div class="trust-step">
+          <span class="trust-ring numeric">2</span>
+          <div>
+            <h3>익명 작성</h3>
+            <p>닉네임으로만 노출되고, 실명·연락처는 공개되지 않아요.</p>
+          </div>
+        </div>
+        <div class="trust-arrow" aria-hidden="true">→</div>
+        <div class="trust-step">
+          <span class="trust-ring numeric">3</span>
+          <div>
+            <h3>신고 · 관리자 검수</h3>
+            <p>이상 신호가 감지되면 관리자가 직접 확인해요.</p>
+          </div>
+        </div>
+        <div class="trust-arrow" aria-hidden="true">→</div>
+        <div class="trust-step">
+          <span class="trust-ring numeric">4</span>
+          <div>
+            <h3>부정 리뷰 삭제</h3>
+            <p>위반이 확정된 리뷰만 삭제하고, 사유를 통보해요.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S6. 미리 보는 인사이트 ================= -->
+  <section id="insights">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">미리 보는 인사이트</p>
+        <h2>별점 하나로는 알 수 없는 것</h2>
+        <p>평균 4.5여도 호불호가 갈리는 곳일 수 있습니다. 리얼 테이블은 숫자 뒤의 분포를 보여줍니다.</p>
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight-card reveal" id="donut-card">
+          <span class="sample-tag">예시 데이터입니다</span>
+          <h3>별점 분포</h3>
+          <p class="desc">테이블 포 투 · 리뷰 42건 기준 (예시)</p>
+
+          <div class="donut-wrap">
+            <div class="donut" id="donut" role="img" aria-label="별점 분포 도넛차트. 5점 35퍼센트, 4점 40퍼센트, 3점 15퍼센트, 2점 7퍼센트, 1점 3퍼센트, 평균 4.6점, 총 42건.">
+              <div class="donut-center">
+                <span class="val numeric">4.6</span>
+                <span class="cnt numeric">42건</span>
+              </div>
+            </div>
+            <ul class="donut-legend" id="donut-legend"></ul>
+          </div>
+
+          <button class="toggle-table-btn" id="donut-table-toggle" aria-expanded="false" aria-controls="donut-table">표로 보기</button>
+          <table class="data-table" id="donut-table">
+            <caption class="visually-hidden">별점 분포 표</caption>
+            <thead>
+              <tr><th scope="col">별점</th><th scope="col">비율</th><th scope="col">건수</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>5점</td><td class="num numeric">35%</td><td class="num numeric">15건</td></tr>
+              <tr><td>4점</td><td class="num numeric">40%</td><td class="num numeric">17건</td></tr>
+              <tr><td>3점</td><td class="num numeric">15%</td><td class="num numeric">6건</td></tr>
+              <tr><td>2점</td><td class="num numeric">7%</td><td class="num numeric">3건</td></tr>
+              <tr><td>1점</td><td class="num numeric">3%</td><td class="num numeric">1건</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="insight-card reveal" id="wordcloud-card">
+          <span class="sample-tag">예시 데이터입니다</span>
+          <h3>리뷰 키워드</h3>
+          <p class="desc">자주 언급된 단어로 분위기를 3초 만에 파악해요 (예시)</p>
+
+          <div class="wordcloud" id="wordcloud" role="img" aria-label="리뷰에서 자주 언급된 키워드. 분위기 31회, 룸 24회, 직원 19회, 플레이팅 15회, 조용함 12회, 데이트 11회, 뷰맛집 9회, 맛 8회 등."></div>
+
+          <button class="keyword-list-btn" id="keyword-toggle" aria-expanded="false" aria-controls="keyword-table">키워드 목록 보기</button>
+          <table class="data-table keyword-table" id="keyword-table">
+            <caption class="visually-hidden">키워드 언급 횟수 표</caption>
+            <thead><tr><th scope="col">키워드</th><th scope="col">언급 횟수</th></tr></thead>
+            <tbody id="keyword-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S7. 빌보드 테이블 예고 ================= -->
+  <section id="billboard">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">빌보드 테이블 예고</p>
+        <h2>매달, 리뷰로만 결정되는 순위</h2>
+        <p>가게는 후보 신청조차 할 수 없습니다. 선정 기준은 전부 공개됩니다.</p>
+      </div>
+
+      <div class="billboard-grid">
+        <div class="bb-panel reveal">
+          <span class="sample-tag">예시 데이터입니다</span>
+          <h3>이달의 우수 리뷰어</h3>
+          <div class="bb-row first">
+            <span class="bb-rank numeric">1</span>
+            <span class="bb-avatar" aria-hidden="true">🥇</span>
+            <div><div class="bb-name">조용한테이블</div><div class="bb-meta">이달 리뷰 7건</div></div>
+            <span class="bb-score numeric">312점</span>
+          </div>
+          <div class="bb-row">
+            <span class="bb-rank numeric">2</span>
+            <span class="bb-avatar" aria-hidden="true">🙂</span>
+            <div><div class="bb-name">한줄기록가</div><div class="bb-meta">이달 리뷰 5건</div></div>
+            <span class="bb-score numeric">278점</span>
+          </div>
+          <div class="bb-row">
+            <span class="bb-rank numeric">3</span>
+            <span class="bb-avatar" aria-hidden="true">🙂</span>
+            <div><div class="bb-name">마포산책러</div><div class="bb-meta">이달 리뷰 4건</div></div>
+            <span class="bb-score numeric">241점</span>
+          </div>
+          <p class="bb-footnote">금전 보상 없음 · 리뷰 데이터로만 산정</p>
+        </div>
+
+        <div class="bb-panel reveal">
+          <span class="sample-tag">예시 데이터입니다</span>
+          <h3>이달의 베스트 식당</h3>
+          <div class="bb-row first">
+            <span class="bb-rank numeric">1</span>
+            <span class="bb-avatar" aria-hidden="true">🍽</span>
+            <div><div class="bb-name">테이블 포 투</div><div class="bb-meta">강남구 · 신규 리뷰 12건</div></div>
+            <span class="bb-score numeric">★ 4.8</span>
+          </div>
+          <div class="bb-row">
+            <span class="bb-rank numeric">2</span>
+            <span class="bb-avatar" aria-hidden="true">🍽</span>
+            <div><div class="bb-name">조용한 골목</div><div class="bb-meta">마포구 · 신규 리뷰 9건</div></div>
+            <span class="bb-score numeric">★ 4.7</span>
+          </div>
+          <div class="bb-row">
+            <span class="bb-rank numeric">3</span>
+            <span class="bb-avatar" aria-hidden="true">🍽</span>
+            <div><div class="bb-name">코스 서른네평</div><div class="bb-meta">서초구 · 신규 리뷰 8건</div></div>
+            <span class="bb-score numeric">★ 4.6</span>
+          </div>
+          <p class="bb-footnote">리뷰 N건 기준 · 광고로 순위 변동 없음</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S8. 출시 로드맵 ================= -->
+  <section id="roadmap">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">출시 로드맵</p>
+        <h2>지금은 여기까지 왔어요</h2>
+      </div>
+      <div class="roadmap reveal">
+        <div class="roadmap-item is-current">
+          <span class="tag">지금 · PHASE 0</span>
+          <h3>랜딩페이지 · 회원가입</h3>
+          <p>가치 제안을 먼저 열고, 계정부터 만들어 두실 수 있습니다.</p>
+        </div>
+        <div class="roadmap-item">
+          <span class="tag">다음 · PHASE 0.5</span>
+          <h3>리뷰 탐색 프로토타입</h3>
+          <p>검색·필터·별점 분포 대시보드를 더미 데이터로 먼저 검증합니다.</p>
+        </div>
+        <div class="roadmap-item">
+          <span class="tag">PHASE 1</span>
+          <h3>회원가입 · 리뷰 작성 · 신고</h3>
+          <p>이메일 인증 기반 계정과 실제 리뷰 작성·신고 체계를 엽니다.</p>
+        </div>
+        <div class="roadmap-item">
+          <span class="tag">PHASE 2</span>
+          <h3>저장 · 빌보드 · 훈장</h3>
+          <p>후보 저장, 이달의 우수 리뷰어·베스트 식당, 금·은·동 훈장을 시작합니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S9. 사전 등록 CTA ================= -->
+  <section id="signup">
+    <div class="signup-section reveal">
+      <div class="signup-inner">
+        <h2>지금 가입하고 시작하세요</h2>
+        <p>닉네임과 이메일만 있으면 1분이면 충분합니다. 리뷰 탐색 기능이 열리면 가장 먼저 알려드릴게요.</p>
+        <div class="hero-cta-row">
+          <button type="button" class="btn btn-primary" id="cta-open-signup">회원가입하기</button>
+          <button type="button" class="btn btn-secondary" id="cta-open-login">이미 계정이 있어요</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 관리자 전용 (로그인 시에만 노출) ================= -->
+  <section id="admin-panel" hidden>
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">관리자 전용</p>
+        <h2>가입자 현황</h2>
+        <p>데모 화면입니다. 실제 권한 체계·감사 로그는 Phase 1에서 Supabase로 구현됩니다.</p>
+      </div>
+      <div class="insight-card" style="max-width:760px;">
+        <p class="desc" style="margin:0 0 16px;">총 가입자 <strong class="numeric" id="admin-user-count">0</strong>명</p>
+        <div style="overflow-x:auto;">
+          <table class="data-table is-active">
+            <caption class="visually-hidden">가입자 목록</caption>
+            <thead>
+              <tr><th scope="col">닉네임</th><th scope="col">이메일</th><th scope="col">역할</th><th scope="col">가입일시</th></tr>
+            </thead>
+            <tbody id="admin-user-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S10. FAQ ================= -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">자주 묻는 질문</p>
+        <h2>FAQ</h2>
+      </div>
+      <div class="faq-list reveal" id="faq-list">
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            서울만 되나요?
+            <span class="plus" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a"><p>네, 서울특별시 전용입니다.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            무료인가요?
+            <span class="plus" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a"><p>리뷰 조회·작성 모두 무료입니다.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            익명인데 어떻게 신뢰하나요?
+            <span class="plus" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a"><p>이메일 인증을 거친 계정만 리뷰를 남길 수 있고, 신고가 들어오면 관리자가 직접 검수합니다. 표면은 익명이지만 모든 행위는 내부적으로 추적·관리됩니다.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            동영상은 못 올리나요?
+            <span class="plus" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a"><p>사진과 글에 집중합니다. GIF·동영상·음성은 지원하지 않습니다.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            가게가 광고를 살 수 있나요?
+            <span class="plus" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a"><p>불가능합니다. 순위와 리뷰 삭제는 판매하지 않습니다.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            유료 회원은 뭐가 다른가요?
+            <span class="plus" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a"><p>리뷰 사진을 10장까지 올릴 수 있습니다. 노출·순위·평점에는 어떤 영향도 없습니다.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            언제 출시되나요?
+            <span class="plus" aria-hidden="true">+</span>
+          </button>
+          <div class="faq-a"><p>지금 가입하시면 계정이 먼저 만들어지고, 리뷰 탐색·작성 등 나머지 기능이 열리는 대로 가장 먼저 알려드립니다.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= S11. Footer ================= -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <div class="logo"><span class="ko">리얼 테이블</span><span class="en">Real Table</span></div>
+        <p style="margin-top:8px; font-size:13px; color:var(--rt-ink-50);">서울 기념일 맛집, 광고 없는 진짜 후기만.</p>
+      </div>
+      <nav class="footer-links" aria-label="법적 고지">
+        <a href="mailto:hello@realtable.kr">문의: hello@realtable.kr</a>
+        <a href="#">개인정보처리방침</a>
+        <a href="#">이용약관</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Real Table. 서울특별시 지역 서비스입니다.</p>
+      <p>본 사이트는 Pretendard(SIL Open Font License 1.1) 및 Noto Serif KR(SIL Open Font License 1.1)을 사용합니다.</p>
+      <p>이 페이지의 인사이트·빌보드 데이터는 서비스 소개를 위한 예시이며, 실제 데이터가 아닙니다.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modal-overlay" hidden>
+  <div class="modal" id="modal-login" role="dialog" aria-modal="true" aria-labelledby="login-title" hidden>
+    <button type="button" class="modal-close" aria-label="닫기" data-close-modal>&times;</button>
+    <h2 id="login-title">로그인</h2>
+    <form id="login-form" novalidate>
+      <div class="form-group">
+        <label for="login-email">이메일 주소</label>
+        <input class="field-input" type="email" id="login-email" name="email" autocomplete="email" required>
+      </div>
+      <div class="form-group">
+        <label for="login-password">비밀번호</label>
+        <input class="field-input" type="password" id="login-password" name="password" autocomplete="current-password" required>
+      </div>
+      <p class="field-error" id="login-error" role="alert"></p>
+      <button type="submit" class="btn btn-primary" style="width:100%;">로그인</button>
+    </form>
+    <p class="modal-switch">계정이 없으신가요? <button type="button" class="link-btn" data-switch-to="signup">회원가입</button></p>
+    <p class="modal-hint">데모용 관리자 계정: admin@realtable.kr / RealTable!2026</p>
+  </div>
+
+  <div class="modal" id="modal-signup" role="dialog" aria-modal="true" aria-labelledby="signup-title" hidden>
+    <button type="button" class="modal-close" aria-label="닫기" data-close-modal>&times;</button>
+    <h2 id="signup-title">회원가입</h2>
+    <form id="signup-form-modal" novalidate>
+      <div class="form-group">
+        <label for="signup-nickname">닉네임 (2~12자)</label>
+        <input class="field-input" type="text" id="signup-nickname" name="nickname" minlength="2" maxlength="12" required>
+      </div>
+      <div class="form-group">
+        <label for="signup-email-modal">이메일 주소</label>
+        <input class="field-input" type="email" id="signup-email-modal" name="email" autocomplete="email" required>
+      </div>
+      <div class="form-group">
+        <label for="signup-password">비밀번호 (8자 이상, 영문·숫자·특수문자 중 2종 이상)</label>
+        <input class="field-input" type="password" id="signup-password" name="password" autocomplete="new-password" required>
+      </div>
+      <div class="form-group">
+        <label for="signup-password-confirm">비밀번호 확인</label>
+        <input class="field-input" type="password" id="signup-password-confirm" name="passwordConfirm" autocomplete="new-password" required>
+      </div>
+      <div class="consent-row">
+        <input type="checkbox" id="signup-age" name="age" required>
+        <label for="signup-age">만 14세 이상입니다 (필수)</label>
+      </div>
+      <p class="field-error" id="signup-modal-error" role="alert"></p>
+      <button type="submit" class="btn btn-primary" style="width:100%; margin-top:4px;">회원가입하고 시작하기</button>
+    </form>
+    <p class="modal-switch">이미 계정이 있으신가요? <button type="button" class="link-btn" data-switch-to="login">로그인</button></p>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------------- Reveal on scroll ---------------- */
+  var revealEls = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: "0px 0px -80px 0px" });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add("is-visible"); });
+  }
+
+  /* ---------------- Donut chart (rating distribution) ---------------- */
+  var ratingData = [
+    { label: "5점", pct: 35, count: 15 },
+    { label: "4점", pct: 40, count: 17 },
+    { label: "3점", pct: 15, count: 6 },
+    { label: "2점", pct: 7,  count: 3 },
+    { label: "1점", pct: 3,  count: 1 }
+  ];
+  var ratingColors = ["#1C1B17", "#55534B", "#85827A", "#B5B2A8", "#E5E0D3"];
+
+  var donutEl = document.getElementById("donut");
+  var legendEl = document.getElementById("donut-legend");
+
+  ratingData.forEach(function (d, i) {
+    var li = document.createElement("li");
+    li.innerHTML =
+      '<span class="swatch" style="background:' + ratingColors[i] + '" aria-hidden="true"></span>' +
+      '<span>' + d.label + '</span>' +
+      '<span class="amt numeric">' + d.pct + '% · ' + d.count + '건</span>';
+    legendEl.appendChild(li);
+  });
+
+  function paintDonut(progress) {
+    var cumulative = 0;
+    var stops = [];
+    ratingData.forEach(function (d, i) {
+      var start = cumulative;
+      var end = cumulative + d.pct * progress;
+      stops.push(ratingColors[i] + " " + start + "% " + end + "%");
+      cumulative = end;
+    });
+    stops.push(ratingColors[ratingColors.length - 1] + " " + cumulative + "% 100%");
+    donutEl.style.background = "conic-gradient(" + stops.join(",") + ")";
+  }
+
+  function animateDonut() {
+    if (reduceMotion) { paintDonut(1); return; }
+    var start = null;
+    var duration = 800;
+    function step(ts) {
+      if (start === null) start = ts;
+      var t = Math.min(1, (ts - start) / duration);
+      var eased = 1 - Math.pow(1 - t, 3);
+      paintDonut(eased);
+      if (t < 1) window.requestAnimationFrame(step);
+    }
+    window.requestAnimationFrame(step);
+  }
+
+  var donutCard = document.getElementById("donut-card");
+  if ("IntersectionObserver" in window) {
+    var donutObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          animateDonut();
+          donutObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    donutObserver.observe(donutCard);
+  } else {
+    paintDonut(1);
+  }
+
+  document.getElementById("donut-table-toggle").addEventListener("click", function () {
+    var table = document.getElementById("donut-table");
+    var open = table.classList.toggle("is-active");
+    this.setAttribute("aria-expanded", open);
+    this.textContent = open ? "표 접기" : "표로 보기";
+  });
+
+  /* ---------------- Word cloud ---------------- */
+  var keywords = [
+    { word: "분위기", count: 31 },
+    { word: "룸", count: 24 },
+    { word: "직원", count: 19 },
+    { word: "플레이팅", count: 15 },
+    { word: "조용함", count: 12 },
+    { word: "데이트", count: 11 },
+    { word: "뷰맛집", count: 9 },
+    { word: "맛", count: 8 },
+    { word: "코스", count: 7 },
+    { word: "기념일", count: 7 },
+    { word: "친절", count: 6 },
+    { word: "와인", count: 5 },
+    { word: "사진잘나옴", count: 5 },
+    { word: "정성", count: 4 },
+    { word: "대화하기좋음", count: 4 },
+    { word: "특별한", count: 3 }
+  ];
+  var maxCount = Math.max.apply(null, keywords.map(function (k) { return k.count; }));
+  var minSize = 13, maxSize = 34;
+
+  var cloudEl = document.getElementById("wordcloud");
+  var tableBody = document.getElementById("keyword-table-body");
+
+  keywords.forEach(function (k, i) {
+    var scale = Math.sqrt(k.count) / Math.sqrt(maxCount);
+    var size = Math.round(minSize + (maxSize - minSize) * scale);
+    var span = document.createElement("span");
+    span.textContent = k.word;
+    span.style.fontSize = size + "px";
+    span.style.transitionDelay = reduceMotion ? "0ms" : (i * 30) + "ms";
+    if (i < 3) span.classList.add("top");
+    else {
+      var shade = Math.max(0, 1 - i / keywords.length);
+      span.style.color = "color-mix(in srgb, var(--rt-ink) " + Math.round(40 + shade * 60) + "%, var(--rt-ink-30))";
+    }
+    span.title = k.count + "회 언급";
+    cloudEl.appendChild(span);
+
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td>" + k.word + "</td><td class='num numeric'>" + k.count + "회</td>";
+    tableBody.appendChild(tr);
+  });
+
+  if ("IntersectionObserver" in window) {
+    var cloudObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          cloudObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    cloudObserver.observe(cloudEl);
+  } else {
+    cloudEl.classList.add("is-visible");
+  }
+
+  document.getElementById("keyword-toggle").addEventListener("click", function () {
+    var table = document.getElementById("keyword-table");
+    var open = table.classList.toggle("is-active");
+    this.setAttribute("aria-expanded", open);
+    this.textContent = open ? "키워드 목록 접기" : "키워드 목록 보기";
+  });
+
+  /* ---------------- FAQ accordion ---------------- */
+  document.querySelectorAll(".faq-item").forEach(function (item) {
+    var btn = item.querySelector(".faq-q");
+    var answer = item.querySelector(".faq-a");
+    btn.addEventListener("click", function () {
+      var isOpen = item.classList.contains("is-open");
+      document.querySelectorAll(".faq-item.is-open").forEach(function (openItem) {
+        if (openItem !== item) {
+          openItem.classList.remove("is-open");
+          openItem.querySelector(".faq-q").setAttribute("aria-expanded", "false");
+          openItem.querySelector(".faq-a").style.maxHeight = null;
+        }
+      });
+      if (isOpen) {
+        item.classList.remove("is-open");
+        btn.setAttribute("aria-expanded", "false");
+        answer.style.maxHeight = null;
+      } else {
+        item.classList.add("is-open");
+        btn.setAttribute("aria-expanded", "true");
+        answer.style.maxHeight = answer.scrollHeight + "px";
+      }
+    });
+  });
+
+  /* ================================================================
+     Auth — client-side demo only (localStorage). No real backend yet;
+     Phase 1 (§17.2) replaces this with Supabase Auth.
+     ================================================================ */
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var USERS_KEY = "rt_users";
+  var SESSION_KEY = "rt_session";
+  var ADMIN_EMAIL = "admin@realtable.kr";
+  var ADMIN_PASSWORD = "RealTable!2026";
+  var FORBIDDEN_NICKNAMES = ["관리자", "admin", "운영자", "realtable"];
+  var AVATAR_EMOJIS = ["🐟","🍷","🥐","🍊","🌿","🥂","🍋","🍇","🥖","🍓"];
+
+  function getUsers() {
+    try { return JSON.parse(window.localStorage.getItem(USERS_KEY) || "[]"); }
+    catch (e) { return []; }
+  }
+  function saveUsers(list) {
+    try { window.localStorage.setItem(USERS_KEY, JSON.stringify(list)); } catch (e) {}
+  }
+  function findUserByEmail(email) {
+    return getUsers().filter(function (u) { return u.email.toLowerCase() === email.toLowerCase(); })[0] || null;
+  }
+  function findUserByNickname(nickname) {
+    return getUsers().filter(function (u) { return u.nickname === nickname; })[0] || null;
+  }
+  function pickAvatar(seed) {
+    var sum = 0;
+    for (var i = 0; i < seed.length; i++) sum += seed.charCodeAt(i);
+    return AVATAR_EMOJIS[sum % AVATAR_EMOJIS.length];
+  }
+  function passwordStrengthOk(pw) {
+    if (pw.length < 8) return false;
+    var kinds = 0;
+    if (/[a-zA-Z]/.test(pw)) kinds++;
+    if (/[0-9]/.test(pw)) kinds++;
+    if (/[^a-zA-Z0-9]/.test(pw)) kinds++;
+    return kinds >= 2;
+  }
+  async function sha256(text) {
+    var enc = new TextEncoder().encode(text);
+    var buf = await crypto.subtle.digest("SHA-256", enc);
+    return Array.prototype.map.call(new Uint8Array(buf), function (b) {
+      return b.toString(16).padStart(2, "0");
+    }).join("");
+  }
+
+  async function seedAdmin() {
+    if (findUserByEmail(ADMIN_EMAIL)) return;
+    var users = getUsers();
+    users.push({
+      email: ADMIN_EMAIL,
+      passwordHash: await sha256(ADMIN_PASSWORD),
+      nickname: "관리자",
+      avatar: "🛡",
+      role: "admin",
+      createdAt: new Date().toISOString()
+    });
+    saveUsers(users);
+  }
+
+  function getSession() {
+    try { return JSON.parse(window.localStorage.getItem(SESSION_KEY) || "null"); }
+    catch (e) { return null; }
+  }
+  function setSession(email) {
+    window.localStorage.setItem(SESSION_KEY, JSON.stringify({ email: email }));
+  }
+  function clearSession() {
+    window.localStorage.removeItem(SESSION_KEY);
+  }
+  function currentUser() {
+    var session = getSession();
+    return session ? findUserByEmail(session.email) : null;
+  }
+
+  /* ---------------- Modal ---------------- */
+  var overlay = document.getElementById("modal-overlay");
+  var modals = {
+    login: document.getElementById("modal-login"),
+    signup: document.getElementById("modal-signup")
+  };
+  var lastFocused = null;
+
+  function openModal(name) {
+    lastFocused = document.activeElement;
+    overlay.hidden = false;
+    Object.keys(modals).forEach(function (k) { modals[k].hidden = k !== name; });
+    document.body.style.overflow = "hidden";
+    var firstInput = modals[name].querySelector("input");
+    if (firstInput) firstInput.focus();
+  }
+  function closeModal() {
+    overlay.hidden = true;
+    Object.keys(modals).forEach(function (k) { modals[k].hidden = true; });
+    document.body.style.overflow = "";
+    if (lastFocused && lastFocused.focus) lastFocused.focus();
+  }
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) closeModal(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !overlay.hidden) closeModal(); });
+  document.querySelectorAll("[data-close-modal]").forEach(function (btn) {
+    btn.addEventListener("click", closeModal);
+  });
+  document.querySelectorAll("[data-switch-to]").forEach(function (btn) {
+    btn.addEventListener("click", function () { openModal(btn.getAttribute("data-switch-to")); });
+  });
+  ["open-login", "hero-open-login", "cta-open-login"].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("click", function () { openModal("login"); });
+  });
+  ["open-signup", "hero-open-signup", "cta-open-signup"].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("click", function () { openModal("signup"); });
+  });
+
+  /* ---------------- Render auth state ---------------- */
+  function renderAuthState() {
+    var user = currentUser();
+    var guestActions = document.getElementById("auth-actions-guest");
+    var userActions = document.getElementById("auth-actions-user");
+    var userChip = document.getElementById("user-chip");
+    var adminBtn = document.getElementById("open-admin");
+    var adminPanel = document.getElementById("admin-panel");
+
+    if (user) {
+      guestActions.hidden = true;
+      userActions.hidden = false;
+      userChip.textContent = user.avatar + " " + user.nickname + "님" + (user.role === "admin" ? " · 관리자" : "");
+      adminBtn.hidden = user.role !== "admin";
+      if (user.role === "admin") {
+        renderAdminPanel();
+      } else {
+        adminPanel.hidden = true;
+      }
+    } else {
+      guestActions.hidden = false;
+      userActions.hidden = true;
+      adminPanel.hidden = true;
+    }
+  }
+
+  function renderAdminPanel() {
+    var users = getUsers();
+    document.getElementById("admin-user-count").textContent = users.length;
+    var body = document.getElementById("admin-user-table-body");
+    body.innerHTML = "";
+    users.slice().sort(function (a, b) {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }).forEach(function (u) {
+      var tr = document.createElement("tr");
+      var nickTd = document.createElement("td");
+      nickTd.textContent = u.avatar + " " + u.nickname;
+      var emailTd = document.createElement("td");
+      emailTd.textContent = u.email;
+      var roleTd = document.createElement("td");
+      roleTd.textContent = u.role === "admin" ? "관리자" : "손님";
+      var dateTd = document.createElement("td");
+      dateTd.className = "numeric";
+      dateTd.textContent = new Date(u.createdAt).toLocaleString("ko-KR");
+      tr.append(nickTd, emailTd, roleTd, dateTd);
+      body.appendChild(tr);
+    });
+  }
+
+  document.getElementById("open-admin").addEventListener("click", function () {
+    var panel = document.getElementById("admin-panel");
+    panel.hidden = false;
+    panel.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  document.getElementById("logout-btn").addEventListener("click", function () {
+    clearSession();
+    renderAuthState();
+  });
+
+  /* ---------------- Login form ---------------- */
+  document.getElementById("login-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var email = document.getElementById("login-email").value.trim();
+    var password = document.getElementById("login-password").value;
+    var errorEl = document.getElementById("login-error");
+    errorEl.classList.remove("is-active");
+
+    var user = findUserByEmail(email);
+    var hash = await sha256(password);
+    if (!user || user.passwordHash !== hash) {
+      errorEl.textContent = "이메일 또는 비밀번호가 올바르지 않습니다.";
+      errorEl.classList.add("is-active");
+      return;
+    }
+    setSession(user.email);
+    e.target.reset();
+    closeModal();
+    renderAuthState();
+  });
+
+  /* ---------------- Signup form ---------------- */
+  document.getElementById("signup-form-modal").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var nickname = document.getElementById("signup-nickname").value.trim();
+    var email = document.getElementById("signup-email-modal").value.trim();
+    var password = document.getElementById("signup-password").value;
+    var passwordConfirm = document.getElementById("signup-password-confirm").value;
+    var ageChecked = document.getElementById("signup-age").checked;
+    var errorEl = document.getElementById("signup-modal-error");
+    errorEl.classList.remove("is-active");
+
+    function fail(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add("is-active");
+    }
+
+    if (nickname.length < 2 || nickname.length > 12) return fail("닉네임은 2~12자로 입력해 주세요.");
+    if (FORBIDDEN_NICKNAMES.some(function (w) { return nickname.toLowerCase().indexOf(w.toLowerCase()) !== -1; })) {
+      return fail("사용할 수 없는 닉네임이에요.");
+    }
+    if (findUserByNickname(nickname)) return fail("이미 사용 중인 닉네임이에요.");
+    if (!EMAIL_RE.test(email)) return fail("올바른 이메일 주소를 입력해 주세요.");
+    if (findUserByEmail(email)) return fail("이미 가입된 이메일이에요.");
+    if (!passwordStrengthOk(password)) return fail("비밀번호는 8자 이상이며 영문·숫자·특수문자 중 2종 이상을 포함해야 해요.");
+    if (password !== passwordConfirm) return fail("비밀번호가 일치하지 않아요.");
+    if (!ageChecked) return fail("만 14세 이상만 가입할 수 있어요.");
+
+    var users = getUsers();
+    users.push({
+      email: email,
+      passwordHash: await sha256(password),
+      nickname: nickname,
+      avatar: pickAvatar(nickname + email),
+      role: "guest",
+      createdAt: new Date().toISOString()
+    });
+    saveUsers(users);
+    setSession(email);
+    e.target.reset();
+    closeModal();
+    renderAuthState();
+  });
+
+  seedAdmin().then(renderAuthState);
+})();
+</script>
+
+</body>
+</html>
