@@ -1044,14 +1044,6 @@ button, a.btn, .faq-q { min-height: 44px; }
 #admin-panel { background: var(--rt-paper-deep); }
 
 /* ---- Restaurant search (Airbnb-style reskin; logic owns the JS behavior) ---- */
-#rt-search-keysetup {
-  margin-bottom: 24px; padding: 18px 20px; border: none;
-  background: var(--rt-yellow-wash); border-radius: var(--rt-radius-lg);
-  color: var(--rt-ink-70); font-size: 14px;
-}
-#rt-search-keysetup a { color: var(--rt-yellow-deep); font-weight: 600; }
-#rt-search-keysetup form { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-#rt-search-keysetup input { flex: 1; min-width: 200px; }
 #rt-search-form { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
 #rt-search-form input { flex: 1; min-width: 200px; }
 #rt-search-chips { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
@@ -1369,15 +1361,6 @@ button, a.btn, .faq-q { min-height: 44px; }
         <p class="eyebrow">맛집 검색 (베타)</p>
         <h2>카카오 로컬로 찾아보기</h2>
         <p>키워드로 서울의 식당·카페를 검색하고, 마음에 드는 곳을 담아두세요.</p>
-      </div>
-
-      <div id="rt-search-keysetup" hidden>
-        <p>검색을 사용하려면 카카오 로컬 API 키가 필요해요. <a href="https://developers.kakao.com/" target="_blank" rel="noopener noreferrer">카카오 개발자 센터</a>에서 REST API 키를 발급받아 입력해 주세요.</p>
-        <form id="rt-search-keysetup-form">
-          <label for="rt-search-key-input" class="visually-hidden">카카오 REST API 키</label>
-          <input class="field-input" type="text" id="rt-search-key-input" placeholder="카카오 REST API 키" autocomplete="off">
-          <button type="submit" class="btn btn-secondary">키 저장</button>
-        </form>
       </div>
 
       <form id="rt-search-form">
@@ -2138,30 +2121,9 @@ button, a.btn, .faq-q { min-height: 44px; }
   var rtSearchChips = document.getElementById("rt-search-chips");
   var rtSearchGrid = document.getElementById("rt-search-grid");
   var rtSearchStatus = document.getElementById("rt-search-status");
-  var rtKeysetup = document.getElementById("rt-search-keysetup");
-  var rtKeysetupForm = document.getElementById("rt-search-keysetup-form");
-  var rtKeysetupInput = document.getElementById("rt-search-key-input");
 
   var rtActiveCategory = "";
   var rtLastResults = [];
-
-  // #rt-search-keysetup's markup (design-owned; not edited here) used to be a
-  // "paste your API key" box. The key now lives server-side only, so this box
-  // is repurposed as a hidden-by-default diagnostic: it only appears when
-  // /api/search reports the server has no KAKAO_REST_API_KEY configured. The
-  // input/save button are no longer functional (nothing to save client-side),
-  // so they're JS-hidden and their submit handler is not attached.
-  if (rtKeysetupForm) rtKeysetupForm.hidden = true;
-
-  function rtShowKeyDiagnostic() {
-    if (!rtKeysetup) return;
-    var msgEl = rtKeysetup.querySelector("p");
-    if (msgEl) msgEl.textContent = "검색 기능이 아직 설정되지 않았어요. Vercel 프로젝트의 환경변수(KAKAO_REST_API_KEY)를 확인해주세요.";
-    rtKeysetup.hidden = false;
-  }
-  function rtHideKeyDiagnostic() {
-    if (rtKeysetup) rtKeysetup.hidden = true;
-  }
 
   if (rtSearchChips) {
     rtSearchChips.querySelectorAll(".rt-search-chip").forEach(function (chip) {
@@ -2184,7 +2146,6 @@ button, a.btn, .faq-q { min-height: 44px; }
   }
 
   async function rtRunSearch(query) {
-    rtHideKeyDiagnostic();
     rtSearchGrid.innerHTML = "";
     rtSearchStatus.textContent = "검색 중...";
     // Same-origin call to the Vercel serverless function (api/search.js), which
@@ -2197,8 +2158,7 @@ button, a.btn, .faq-q { min-height: 44px; }
       var res = await fetch(url);
       if (!res.ok) {
         if (res.status === 500) {
-          rtShowKeyDiagnostic();
-          rtSearchStatus.textContent = "검색 기능을 사용할 수 없어요.";
+          rtSearchStatus.textContent = "검색 기능이 아직 설정되지 않았어요. Vercel 프로젝트의 환경변수(KAKAO_REST_API_KEY)를 확인해주세요.";
         } else {
           rtSearchStatus.textContent = "검색 중 오류가 발생했어요 (" + res.status + ").";
         }
@@ -2265,9 +2225,6 @@ button, a.btn, .faq-q { min-height: 44px; }
       btn.classList.toggle("is-saved", saved);
     });
   }
-
-  // #rt-search-keysetup starts hidden (its HTML default) and only appears if
-  // a search actually comes back with a 500 (server has no key configured).
 
   var rtOriginalRenderAuthState = renderAuthState;
   renderAuthState = function () {
