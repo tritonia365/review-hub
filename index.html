@@ -991,6 +991,27 @@ button, a.btn, .faq-q { min-height: 44px; }
 .modal-hint { margin-top: 14px; font-size: 12px; color: var(--rt-ink-50); text-align: center; }
 
 #admin-panel { background: var(--rt-paper-deep); }
+
+/* ---- Restaurant search (functional scaffold; design owns final look) ---- */
+#rt-search-keysetup { margin-bottom: 20px; padding: 16px; border: 1px dashed var(--rt-ink-30); border-radius: var(--rt-radius-md); }
+#rt-search-keysetup form { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+#rt-search-keysetup input { flex: 1; min-width: 200px; }
+#rt-search-form { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+#rt-search-form input { flex: 1; min-width: 200px; }
+#rt-search-chips { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.rt-search-chip {
+  padding: 6px 14px; border: 1px solid var(--rt-ink-30); background: var(--rt-paper);
+  border-radius: var(--rt-radius-full); font-size: 13px; cursor: pointer; font-family: var(--rt-font-body);
+}
+.rt-search-chip.is-active { background: var(--rt-ink); color: var(--rt-paper); border-color: var(--rt-ink); }
+#rt-search-status { font-size: 13px; color: var(--rt-ink-70); margin-bottom: 12px; min-height: 1.2em; }
+#rt-search-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.rt-search-card { border: 1px solid var(--rt-ink-30); padding: 16px; border-radius: var(--rt-radius-md); display: flex; flex-direction: column; gap: 4px; }
+.rt-search-card h3 { font-size: 16px; margin: 0 0 4px; }
+.rt-search-card-cat, .rt-search-card-addr, .rt-search-card-phone { font-size: 13px; color: var(--rt-ink-70); margin: 0; }
+.rt-search-card-link { font-size: 13px; margin-top: 4px; }
+.rt-search-card-save { margin-top: 10px; align-self: flex-start; }
+.rt-search-card-save.is-saved { background: var(--rt-ink); color: var(--rt-paper); }
 </style>
 </head>
 <body>
@@ -1269,6 +1290,42 @@ button, a.btn, .faq-q { min-height: 44px; }
           <p class="bb-footnote">리뷰 N건 기준 · 광고로 순위 변동 없음</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ================= S7.5 맛집 검색 (신규, 카카오 로컬 API) ================= -->
+  <section id="restaurant-search">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">맛집 검색 (베타)</p>
+        <h2>카카오 로컬로 찾아보기</h2>
+        <p>키워드로 서울의 식당·카페를 검색하고, 마음에 드는 곳을 담아두세요.</p>
+      </div>
+
+      <div id="rt-search-keysetup" hidden>
+        <p>검색을 사용하려면 카카오 로컬 API 키가 필요해요. <a href="https://developers.kakao.com/" target="_blank" rel="noopener noreferrer">카카오 개발자 센터</a>에서 REST API 키를 발급받아 입력해 주세요.</p>
+        <form id="rt-search-keysetup-form">
+          <label for="rt-search-key-input" class="visually-hidden">카카오 REST API 키</label>
+          <input class="field-input" type="text" id="rt-search-key-input" placeholder="카카오 REST API 키" autocomplete="off">
+          <button type="submit" class="btn btn-secondary">키 저장</button>
+        </form>
+      </div>
+
+      <form id="rt-search-form">
+        <label for="rt-search-input" class="visually-hidden">식당·카페 검색</label>
+        <input class="field-input" type="text" id="rt-search-input" placeholder="예: 강남 파스타" autocomplete="off">
+        <button type="submit" class="btn btn-primary">검색</button>
+      </form>
+
+      <div id="rt-search-chips" role="group" aria-label="카테고리 필터">
+        <button type="button" class="rt-search-chip is-active" data-category="">전체</button>
+        <button type="button" class="rt-search-chip" data-category="FD6">음식점</button>
+        <button type="button" class="rt-search-chip" data-category="CE7">카페</button>
+      </div>
+
+      <p id="rt-search-status" role="status" aria-live="polite"></p>
+
+      <div id="rt-search-grid"></div>
     </div>
   </section>
 
@@ -1707,6 +1764,42 @@ button, a.btn, .faq-q { min-height: 44px; }
     }).join("");
   }
 
+  function generateAutoNickname(email) {
+    var local = (email.split("@")[0] || "guest");
+    var base = local.replace(/[^a-zA-Z0-9가-힣]/g, "");
+    if (base.length > 12) base = base.slice(0, 12);
+    if (base.length < 2) base = (base + "guest").slice(0, 12);
+    function forbidden(name) {
+      return FORBIDDEN_NICKNAMES.some(function (w) { return name.toLowerCase().indexOf(w.toLowerCase()) !== -1; });
+    }
+    if (forbidden(base)) base = "guest";
+    var candidate = base;
+    var n = 1;
+    while (findUserByNickname(candidate) || forbidden(candidate)) {
+      var suffix = String(n);
+      candidate = (base.slice(0, Math.max(2, 12 - suffix.length)) + suffix).slice(0, 12);
+      n++;
+      if (n > 999) { candidate = "guest" + String(Date.now()).slice(-4); break; }
+    }
+    return candidate;
+  }
+
+  async function createAutoAccount(email, password) {
+    var users = getUsers();
+    var nickname = generateAutoNickname(email);
+    var user = {
+      email: email,
+      passwordHash: await sha256(password),
+      nickname: nickname,
+      avatar: pickAvatar(nickname + email),
+      role: "guest",
+      createdAt: new Date().toISOString()
+    };
+    users.push(user);
+    saveUsers(users);
+    return user;
+  }
+
   async function seedAdmin() {
     if (findUserByEmail(ADMIN_EMAIL)) return;
     var users = getUsers();
@@ -1835,7 +1928,12 @@ button, a.btn, .faq-q { min-height: 44px; }
     renderAuthState();
   });
 
-  /* ---------------- Login form ---------------- */
+  /* ---------------- Login form (auto-signup on unknown email) ---------------- */
+  (function () {
+    var loginModalHint = document.querySelector("#modal-login .modal-hint");
+    if (loginModalHint) loginModalHint.textContent += " · 계정이 없으면 자동으로 만들어져요.";
+  })();
+
   document.getElementById("login-form").addEventListener("submit", async function (e) {
     e.preventDefault();
     var email = document.getElementById("login-email").value.trim();
@@ -1843,13 +1941,29 @@ button, a.btn, .faq-q { min-height: 44px; }
     var errorEl = document.getElementById("login-error");
     errorEl.classList.remove("is-active");
 
-    var user = findUserByEmail(email);
-    var hash = await sha256(password);
-    if (!user || user.passwordHash !== hash) {
-      errorEl.textContent = "이메일 또는 비밀번호가 올바르지 않습니다.";
+    if (!EMAIL_RE.test(email)) {
+      errorEl.textContent = "올바른 이메일 주소를 입력해 주세요.";
       errorEl.classList.add("is-active");
       return;
     }
+    if (!password) {
+      errorEl.textContent = "비밀번호를 입력해 주세요.";
+      errorEl.classList.add("is-active");
+      return;
+    }
+
+    var user = findUserByEmail(email);
+    if (user) {
+      var hash = await sha256(password);
+      if (user.passwordHash !== hash) {
+        errorEl.textContent = "이메일 또는 비밀번호가 올바르지 않습니다.";
+        errorEl.classList.add("is-active");
+        return;
+      }
+    } else {
+      user = await createAutoAccount(email, password);
+    }
+
     setSession(user.email);
     e.target.reset();
     closeModal();
@@ -1898,6 +2012,200 @@ button, a.btn, .faq-q { min-height: 44px; }
     closeModal();
     renderAuthState();
   });
+
+  /* ================================================================
+     Restaurant search — Kakao Local keyword search + save-to-list.
+     Beyond current PRD phase scope; added on explicit user request.
+     API key is never hardcoded — read from localStorage (rt_kakao_key).
+     ================================================================ */
+  var KAKAO_KEY_STORAGE = "rt_kakao_key";
+  var SAVED_PLACES_KEY = "rt_saved_places";
+
+  function getKakaoKey() {
+    try { return window.localStorage.getItem(KAKAO_KEY_STORAGE) || ""; }
+    catch (e) { return ""; }
+  }
+  function setKakaoKey(key) {
+    try { window.localStorage.setItem(KAKAO_KEY_STORAGE, key); } catch (e) {}
+  }
+  function getSavedPlaces() {
+    try { return JSON.parse(window.localStorage.getItem(SAVED_PLACES_KEY) || "[]"); }
+    catch (e) { return []; }
+  }
+  function setSavedPlaces(list) {
+    try { window.localStorage.setItem(SAVED_PLACES_KEY, JSON.stringify(list)); } catch (e) {}
+  }
+  function isPlaceSaved(ownerEmail, placeId) {
+    return getSavedPlaces().some(function (p) { return p.ownerEmail === ownerEmail && p.placeId === placeId; });
+  }
+  function togglePlaceSaved(ownerEmail, place) {
+    var list = getSavedPlaces();
+    var idx = -1;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].ownerEmail === ownerEmail && list[i].placeId === place.placeId) { idx = i; break; }
+    }
+    if (idx >= 0) {
+      list.splice(idx, 1);
+      setSavedPlaces(list);
+      return false;
+    }
+    list.push({
+      ownerEmail: ownerEmail,
+      placeId: place.placeId,
+      placeName: place.placeName,
+      categoryName: place.categoryName,
+      roadAddress: place.roadAddress,
+      phone: place.phone,
+      placeUrl: place.placeUrl,
+      savedAt: new Date().toISOString()
+    });
+    setSavedPlaces(list);
+    return true;
+  }
+  function escapeHtml(str) {
+    return String(str == null ? "" : str).replace(/[&<>"']/g, function (ch) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[ch];
+    });
+  }
+
+  var rtSearchForm = document.getElementById("rt-search-form");
+  var rtSearchInput = document.getElementById("rt-search-input");
+  var rtSearchChips = document.getElementById("rt-search-chips");
+  var rtSearchGrid = document.getElementById("rt-search-grid");
+  var rtSearchStatus = document.getElementById("rt-search-status");
+  var rtKeysetup = document.getElementById("rt-search-keysetup");
+  var rtKeysetupForm = document.getElementById("rt-search-keysetup-form");
+  var rtKeysetupInput = document.getElementById("rt-search-key-input");
+
+  var rtActiveCategory = "";
+  var rtLastResults = [];
+
+  function rtUpdateKeysetupVisibility() {
+    var hasKey = !!getKakaoKey();
+    if (rtKeysetup) rtKeysetup.hidden = hasKey;
+    return hasKey;
+  }
+
+  if (rtKeysetupForm) {
+    rtKeysetupForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var key = rtKeysetupInput.value.trim();
+      if (!key) return;
+      setKakaoKey(key);
+      rtKeysetupInput.value = "";
+      rtUpdateKeysetupVisibility();
+      rtSearchStatus.textContent = "API 키를 저장했어요. 다시 검색해 주세요.";
+    });
+  }
+
+  if (rtSearchChips) {
+    rtSearchChips.querySelectorAll(".rt-search-chip").forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        rtSearchChips.querySelectorAll(".rt-search-chip").forEach(function (c) { c.classList.remove("is-active"); });
+        chip.classList.add("is-active");
+        rtActiveCategory = chip.getAttribute("data-category") || "";
+        if (rtSearchInput.value.trim()) rtRunSearch(rtSearchInput.value.trim());
+      });
+    });
+  }
+
+  if (rtSearchForm) {
+    rtSearchForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var q = rtSearchInput.value.trim();
+      if (!q) return;
+      rtRunSearch(q);
+    });
+  }
+
+  async function rtRunSearch(query) {
+    if (!rtUpdateKeysetupVisibility()) {
+      rtSearchStatus.textContent = "카카오 API 키를 먼저 입력해 주세요.";
+      return;
+    }
+    rtSearchGrid.innerHTML = "";
+    rtSearchStatus.textContent = "검색 중...";
+    var key = getKakaoKey();
+    var url = "https://dapi.kakao.com/v2/local/search/keyword.json?query=" + encodeURIComponent(query) + "&size=15";
+    if (rtActiveCategory) url += "&category_group_code=" + encodeURIComponent(rtActiveCategory);
+
+    try {
+      var res = await fetch(url, { headers: { Authorization: "KakaoAK " + key } });
+      if (!res.ok) {
+        rtSearchStatus.textContent = res.status === 401
+          ? "API 키가 올바르지 않아요. 키를 다시 확인해 주세요."
+          : "검색 중 오류가 발생했어요 (" + res.status + ").";
+        return;
+      }
+      var data = await res.json();
+      var docs = (data && data.documents) || [];
+      rtLastResults = docs.map(function (d) {
+        return {
+          placeId: d.id,
+          placeName: d.place_name,
+          categoryName: d.category_name,
+          roadAddress: d.road_address_name || d.address_name,
+          phone: d.phone || "전화번호 정보 없음",
+          placeUrl: d.place_url
+        };
+      });
+      rtSearchStatus.textContent = rtLastResults.length === 0
+        ? "검색 결과가 없어요."
+        : rtLastResults.length + "곳을 찾았어요.";
+      rtRenderSearchResults(rtLastResults);
+    } catch (err) {
+      rtSearchStatus.textContent = "검색 중 오류가 발생했어요. 네트워크 상태를 확인해 주세요.";
+    }
+  }
+
+  function rtRenderSearchResults(places) {
+    rtSearchGrid.innerHTML = "";
+    var user = currentUser();
+    places.forEach(function (place) {
+      var card = document.createElement("div");
+      card.className = "rt-search-card";
+      var saved = user ? isPlaceSaved(user.email, place.placeId) : false;
+      card.innerHTML =
+        "<h3>" + escapeHtml(place.placeName) + "</h3>" +
+        "<p class=\"rt-search-card-cat\">" + escapeHtml(place.categoryName) + "</p>" +
+        "<p class=\"rt-search-card-addr\">" + escapeHtml(place.roadAddress) + "</p>" +
+        "<p class=\"rt-search-card-phone\">" + escapeHtml(place.phone) + "</p>" +
+        "<a class=\"rt-search-card-link\" href=\"" + escapeHtml(place.placeUrl) + "\" target=\"_blank\" rel=\"noopener noreferrer\">카카오맵에서 보기</a>" +
+        "<button type=\"button\" class=\"btn btn-secondary rt-search-card-save\">" + (saved ? "담음" : "담기") + "</button>";
+      var saveBtn = card.querySelector(".rt-search-card-save");
+      if (saved) saveBtn.classList.add("is-saved");
+      saveBtn.addEventListener("click", function () {
+        var u = currentUser();
+        if (!u) { openModal("login"); return; }
+        var nowSaved = togglePlaceSaved(u.email, place);
+        saveBtn.textContent = nowSaved ? "담음" : "담기";
+        saveBtn.classList.toggle("is-saved", nowSaved);
+      });
+      rtSearchGrid.appendChild(card);
+    });
+  }
+
+  function rtSyncSaveButtons() {
+    if (!rtSearchGrid) return;
+    var user = currentUser();
+    var cards = rtSearchGrid.querySelectorAll(".rt-search-card");
+    cards.forEach(function (card, i) {
+      var place = rtLastResults[i];
+      var btn = card.querySelector(".rt-search-card-save");
+      if (!place || !btn) return;
+      var saved = user ? isPlaceSaved(user.email, place.placeId) : false;
+      btn.textContent = saved ? "담음" : "담기";
+      btn.classList.toggle("is-saved", saved);
+    });
+  }
+
+  rtUpdateKeysetupVisibility();
+
+  var rtOriginalRenderAuthState = renderAuthState;
+  renderAuthState = function () {
+    rtOriginalRenderAuthState();
+    rtSyncSaveButtons();
+  };
 
   seedAdmin().then(renderAuthState);
 })();
