@@ -31,10 +31,6 @@
 }
 </script>
 
-<!-- Optional local dev config (git-ignored). Sets window.RT_KAKAO_APP_KEY if present.
-     Safe to be missing: onerror silently no-ops, getKakaoKey() falls back to localStorage. -->
-<script src="config.local.js" onerror="/* config.local.js not present — falls back to localStorage rt_kakao_key */"></script>
-
 <style>
 /* ============================================================
    REAL-REVIEW01 — 리얼 테이블 랜딩페이지
@@ -2089,17 +2085,52 @@ button, a.btn, .faq-q { min-height: 44px; }
   /* ================================================================
      Restaurant search — Kakao Local keyword search + save-to-list.
      Beyond current PRD phase scope; added on explicit user request.
-     API key is never hardcoded — read from localStorage (rt_kakao_key).
+     API key is never hardcoded — read from a git-ignored .env file
+     (fetched at load time, since browsers can't parse .env natively),
+     falling back to localStorage (rt_kakao_key) set via the on-page
+     #rt-search-keysetup prompt.
      ================================================================ */
   var KAKAO_KEY_STORAGE = "rt_kakao_key";
   var SAVED_PLACES_KEY = "rt_saved_places";
+  var envKakaoKey = ""; // cached result of the .env fetch below; "" until loaded/found
+
+  function parseEnvKakaoKey(text) {
+    var lines = text.split(/\r?\n/);
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i].trim();
+      if (!line || line.charAt(0) === "#") continue;
+      var eq = line.indexOf("=");
+      if (eq === -1) continue;
+      if (line.slice(0, eq).trim() !== "KAKAO_REST_API_KEY") continue;
+      var value = line.slice(eq + 1).trim();
+      if (value.length >= 2) {
+        var first = value.charAt(0), last = value.charAt(value.length - 1);
+        if ((first === "\"" && last === "\"") || (first === "'" && last === "'")) {
+          value = value.slice(1, -1);
+        }
+      }
+      return value;
+    }
+    return "";
+  }
+
+  async function loadEnvKakaoKey() {
+    // fetch("./.env") only works when served over http(s)://; file:// (and a
+    // missing .env) reject the fetch — swallow that and keep the localStorage
+    // fallback, never let a missing/unreachable .env break the page.
+    try {
+      var res = await fetch("./.env");
+      if (!res.ok) return;
+      var text = await res.text();
+      var value = parseEnvKakaoKey(text);
+      if (value) envKakaoKey = value;
+    } catch (e) {
+      // ignored — no .env, not served over http(s), or a network hiccup.
+    }
+  }
 
   function getKakaoKey() {
-    // Priority 1: config.local.js (git-ignored, set by the developer for local dev).
-    if (typeof window.RT_KAKAO_APP_KEY === "string" && window.RT_KAKAO_APP_KEY.trim()) {
-      return window.RT_KAKAO_APP_KEY.trim();
-    }
-    // Priority 2: key entered via the on-page #rt-search-keysetup UI.
+    if (envKakaoKey) return envKakaoKey;
     try { return window.localStorage.getItem(KAKAO_KEY_STORAGE) || ""; }
     catch (e) { return ""; }
   }
@@ -2278,6 +2309,10 @@ button, a.btn, .faq-q { min-height: 44px; }
   }
 
   rtUpdateKeysetupVisibility();
+  // Initial render uses localStorage state (sync); once the .env fetch above
+  // resolves, re-check so the #rt-search-keysetup prompt auto-hides if a key
+  // was found there. A brief flash of the prompt on first load is expected.
+  loadEnvKakaoKey().then(rtUpdateKeysetupVisibility);
 
   var rtOriginalRenderAuthState = renderAuthState;
   renderAuthState = function () {

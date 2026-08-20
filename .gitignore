@@ -1,2 +1,3 @@
 # Local-only dev config (may contain a real Kakao REST API key). Never commit this.
+.env
 config.local.js
