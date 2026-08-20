@@ -2083,60 +2083,16 @@ button, a.btn, .faq-q { min-height: 44px; }
   });
 
   /* ================================================================
-     Restaurant search — Kakao Local keyword search + save-to-list.
+     Restaurant search — Kakao Local keyword search (via /api/search) + save-to-list.
      Beyond current PRD phase scope; added on explicit user request.
-     API key is never hardcoded — read from a git-ignored .env file
-     (fetched at load time, since browsers can't parse .env natively),
-     falling back to localStorage (rt_kakao_key) set via the on-page
-     #rt-search-keysetup prompt.
+     The Kakao REST API key is never present in client code or requests —
+     /api/search is a Vercel serverless function (api/search.js) that holds
+     the key server-side (process.env.KAKAO_REST_API_KEY) and proxies the
+     call to Kakao. This avoids exposing the key in devtools and avoids
+     per-domain CORS/Web-platform registration in the Kakao console.
      ================================================================ */
-  var KAKAO_KEY_STORAGE = "rt_kakao_key";
   var SAVED_PLACES_KEY = "rt_saved_places";
-  var envKakaoKey = ""; // cached result of the .env fetch below; "" until loaded/found
 
-  function parseEnvKakaoKey(text) {
-    var lines = text.split(/\r?\n/);
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i].trim();
-      if (!line || line.charAt(0) === "#") continue;
-      var eq = line.indexOf("=");
-      if (eq === -1) continue;
-      if (line.slice(0, eq).trim() !== "KAKAO_REST_API_KEY") continue;
-      var value = line.slice(eq + 1).trim();
-      if (value.length >= 2) {
-        var first = value.charAt(0), last = value.charAt(value.length - 1);
-        if ((first === "\"" && last === "\"") || (first === "'" && last === "'")) {
-          value = value.slice(1, -1);
-        }
-      }
-      return value;
-    }
-    return "";
-  }
-
-  async function loadEnvKakaoKey() {
-    // fetch("./.env") only works when served over http(s)://; file:// (and a
-    // missing .env) reject the fetch — swallow that and keep the localStorage
-    // fallback, never let a missing/unreachable .env break the page.
-    try {
-      var res = await fetch("./.env");
-      if (!res.ok) return;
-      var text = await res.text();
-      var value = parseEnvKakaoKey(text);
-      if (value) envKakaoKey = value;
-    } catch (e) {
-      // ignored — no .env, not served over http(s), or a network hiccup.
-    }
-  }
-
-  function getKakaoKey() {
-    if (envKakaoKey) return envKakaoKey;
-    try { return window.localStorage.getItem(KAKAO_KEY_STORAGE) || ""; }
-    catch (e) { return ""; }
-  }
-  function setKakaoKey(key) {
-    try { window.localStorage.setItem(KAKAO_KEY_STORAGE, key); } catch (e) {}
-  }
   function getSavedPlaces() {
     try { return JSON.parse(window.localStorage.getItem(SAVED_PLACES_KEY) || "[]"); }
     catch (e) { return []; }
@@ -2189,22 +2145,22 @@ button, a.btn, .faq-q { min-height: 44px; }
   var rtActiveCategory = "";
   var rtLastResults = [];
 
-  function rtUpdateKeysetupVisibility() {
-    var hasKey = !!getKakaoKey();
-    if (rtKeysetup) rtKeysetup.hidden = hasKey;
-    return hasKey;
-  }
+  // #rt-search-keysetup's markup (design-owned; not edited here) used to be a
+  // "paste your API key" box. The key now lives server-side only, so this box
+  // is repurposed as a hidden-by-default diagnostic: it only appears when
+  // /api/search reports the server has no KAKAO_REST_API_KEY configured. The
+  // input/save button are no longer functional (nothing to save client-side),
+  // so they're JS-hidden and their submit handler is not attached.
+  if (rtKeysetupForm) rtKeysetupForm.hidden = true;
 
-  if (rtKeysetupForm) {
-    rtKeysetupForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var key = rtKeysetupInput.value.trim();
-      if (!key) return;
-      setKakaoKey(key);
-      rtKeysetupInput.value = "";
-      rtUpdateKeysetupVisibility();
-      rtSearchStatus.textContent = "API 키를 저장했어요. 다시 검색해 주세요.";
-    });
+  function rtShowKeyDiagnostic() {
+    if (!rtKeysetup) return;
+    var msgEl = rtKeysetup.querySelector("p");
+    if (msgEl) msgEl.textContent = "검색 기능이 아직 설정되지 않았어요. Vercel 프로젝트의 환경변수(KAKAO_REST_API_KEY)를 확인해주세요.";
+    rtKeysetup.hidden = false;
+  }
+  function rtHideKeyDiagnostic() {
+    if (rtKeysetup) rtKeysetup.hidden = true;
   }
 
   if (rtSearchChips) {
@@ -2228,22 +2184,24 @@ button, a.btn, .faq-q { min-height: 44px; }
   }
 
   async function rtRunSearch(query) {
-    if (!rtUpdateKeysetupVisibility()) {
-      rtSearchStatus.textContent = "카카오 API 키를 먼저 입력해 주세요.";
-      return;
-    }
+    rtHideKeyDiagnostic();
     rtSearchGrid.innerHTML = "";
     rtSearchStatus.textContent = "검색 중...";
-    var key = getKakaoKey();
-    var url = "https://dapi.kakao.com/v2/local/search/keyword.json?query=" + encodeURIComponent(query) + "&size=15";
+    // Same-origin call to the Vercel serverless function (api/search.js), which
+    // holds the Kakao key server-side and proxies the request — the client
+    // never sees or sends a Kakao API key.
+    var url = "/api/search?query=" + encodeURIComponent(query) + "&size=15";
     if (rtActiveCategory) url += "&category_group_code=" + encodeURIComponent(rtActiveCategory);
 
     try {
-      var res = await fetch(url, { headers: { Authorization: "KakaoAK " + key } });
+      var res = await fetch(url);
       if (!res.ok) {
-        rtSearchStatus.textContent = res.status === 401
-          ? "API 키가 올바르지 않아요. 키를 다시 확인해 주세요."
-          : "검색 중 오류가 발생했어요 (" + res.status + ").";
+        if (res.status === 500) {
+          rtShowKeyDiagnostic();
+          rtSearchStatus.textContent = "검색 기능을 사용할 수 없어요.";
+        } else {
+          rtSearchStatus.textContent = "검색 중 오류가 발생했어요 (" + res.status + ").";
+        }
         return;
       }
       var data = await res.json();
@@ -2308,11 +2266,8 @@ button, a.btn, .faq-q { min-height: 44px; }
     });
   }
 
-  rtUpdateKeysetupVisibility();
-  // Initial render uses localStorage state (sync); once the .env fetch above
-  // resolves, re-check so the #rt-search-keysetup prompt auto-hides if a key
-  // was found there. A brief flash of the prompt on first load is expected.
-  loadEnvKakaoKey().then(rtUpdateKeysetupVisibility);
+  // #rt-search-keysetup starts hidden (its HTML default) and only appears if
+  // a search actually comes back with a 500 (server has no key configured).
 
   var rtOriginalRenderAuthState = renderAuthState;
   renderAuthState = function () {
