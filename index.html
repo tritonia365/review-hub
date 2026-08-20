@@ -31,6 +31,10 @@
 }
 </script>
 
+<!-- Optional local dev config (git-ignored). Sets window.RT_KAKAO_APP_KEY if present.
+     Safe to be missing: onerror silently no-ops, getKakaoKey() falls back to localStorage. -->
+<script src="config.local.js" onerror="/* config.local.js not present — falls back to localStorage rt_kakao_key */"></script>
+
 <style>
 /* ============================================================
    REAL-REVIEW01 — 리얼 테이블 랜딩페이지
@@ -2022,6 +2026,11 @@ button, a.btn, .faq-q { min-height: 44px; }
   var SAVED_PLACES_KEY = "rt_saved_places";
 
   function getKakaoKey() {
+    // Priority 1: config.local.js (git-ignored, set by the developer for local dev).
+    if (typeof window.RT_KAKAO_APP_KEY === "string" && window.RT_KAKAO_APP_KEY.trim()) {
+      return window.RT_KAKAO_APP_KEY.trim();
+    }
+    // Priority 2: key entered via the on-page #rt-search-keysetup UI.
     try { return window.localStorage.getItem(KAKAO_KEY_STORAGE) || ""; }
     catch (e) { return ""; }
   }
