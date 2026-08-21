@@ -1896,6 +1896,7 @@ button, a.btn, .faq-q { min-height: 44px; }
     if (/invalid login credentials/i.test(m)) return "이메일 또는 비밀번호가 올바르지 않습니다.";
     if (/email not confirmed/i.test(m)) return "이메일 인증이 필요합니다. 메일함을 확인해주세요.";
     if (/already registered|already exists/i.test(m)) return "이미 가입된 이메일이에요.";
+    if (/email address .* is invalid|email_address_invalid/i.test(m)) return "이메일 주소 형식이 올바르지 않아요. 다른 이메일 주소를 입력해 주세요.";
     if (/password should be at least/i.test(m)) return "비밀번호는 8자 이상이어야 해요.";
     if (/rate limit/i.test(m)) return "요청이 너무 많아요. 잠시 후 다시 시도해주세요.";
     return fallback || "요청 처리 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.";
