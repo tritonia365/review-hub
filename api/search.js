@@ -12,7 +12,14 @@
 //   -> mirrors Kakao's status code + body on a non-2xx Kakao response
 //   -> 200 + Kakao's raw JSON (including `documents`) on success
 
+var checkRateLimit = require("./_rateLimit").checkRateLimit;
+
 module.exports = async (req, res) => {
+  if (!checkRateLimit(req, "search", 30, 60000)) {
+    res.status(429).json({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." });
+    return;
+  }
+
   var query = req.query && req.query.query;
   var categoryGroupCode = req.query && req.query.category_group_code;
   var size = (req.query && req.query.size) || "15";

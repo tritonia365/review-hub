@@ -35,7 +35,14 @@ function haversineMeters(lat1, lng1, lat2, lng2) {
   return EARTH_RADIUS_METERS * c;
 }
 
+var checkRateLimit = require("./_rateLimit").checkRateLimit;
+
 module.exports = async (req, res) => {
+  if (!checkRateLimit(req, "reviews", 30, 60000)) {
+    res.status(429).json({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." });
+    return;
+  }
+
   var name = req.query && req.query.name;
   var latRaw = req.query && req.query.lat;
   var lngRaw = req.query && req.query.lng;

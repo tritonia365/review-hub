@@ -17,7 +17,14 @@
 //      parse as the requested JSON shape
 //   -> 200 { sentiment: {positive,neutral,negative}, keywords: [...], summary }
 
+var checkRateLimit = require("./_rateLimit").checkRateLimit;
+
 var MODEL = "gemini-3.1-flash-lite";
+// Google Places API (New) returns at most 5 reviews per place, so normal
+// usage never comes close to this — it's just a hard ceiling against a
+// caller that skips the UI and posts a huge fabricated array directly to
+// run up Gemini costs.
+var MAX_REVIEWS = 20;
 
 var RESPONSE_SCHEMA = {
   type: "OBJECT",
@@ -72,12 +79,21 @@ module.exports = async (req, res) => {
     return;
   }
 
+  if (!checkRateLimit(req, "analyze", 10, 60000)) {
+    res.status(429).json({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." });
+    return;
+  }
+
   var body = req.body || {};
   var placeName = body.placeName;
   var reviews = body.reviews;
 
   if (!placeName || !Array.isArray(reviews) || reviews.length === 0) {
     res.status(400).json({ error: "placeName과 비어 있지 않은 reviews 배열이 필요합니다." });
+    return;
+  }
+  if (reviews.length > MAX_REVIEWS) {
+    res.status(400).json({ error: "reviews는 최대 " + MAX_REVIEWS + "개까지 보낼 수 있습니다." });
     return;
   }
 

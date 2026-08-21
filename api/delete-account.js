@@ -12,11 +12,18 @@
 //   -> 500 if SUPABASE_SERVICE_ROLE_KEY is not configured on the server
 //   -> 200 { ok: true } on success
 
+var checkRateLimit = require("./_rateLimit").checkRateLimit;
+
 var SUPABASE_URL = "https://qpeyzjsmikuchthtntjq.supabase.co";
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") {
     res.status(405).json({ error: "POST 요청만 허용됩니다." });
+    return;
+  }
+
+  if (!checkRateLimit(req, "delete-account", 5, 60000)) {
+    res.status(429).json({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." });
     return;
   }
 
