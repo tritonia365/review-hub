@@ -1077,6 +1077,22 @@ button, a.btn, .faq-q { min-height: 44px; }
 .rt-search-card-link { font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--rt-ink); text-decoration: underline; text-underline-offset: 2px; }
 .rt-search-card-save { margin-top: 12px; align-self: flex-start; height: 40px; padding: 0 18px; border-radius: var(--rt-radius-full); }
 .rt-search-card-save.is-saved { background: var(--rt-yellow); color: #FFFFFF; border-color: var(--rt-yellow); }
+
+/* ---- 나의 담기 내역 ---- */
+.rt-saved-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.rt-saved-card {
+  border: 1px solid var(--rt-line-soft); padding: 20px; border-radius: var(--rt-radius-lg);
+  display: flex; flex-direction: column; gap: 4px; background: var(--rt-paper-pure);
+  box-shadow: var(--rt-shadow-card);
+}
+.rt-saved-card h3 { font-size: 17px; font-weight: 700; margin: 0 0 4px; }
+.rt-saved-card-cat, .rt-saved-card-addr, .rt-saved-card-phone { font-size: 13px; color: var(--rt-ink-70); margin: 0; }
+.rt-saved-card-cat { color: var(--rt-yellow-deep); font-weight: 600; }
+.rt-saved-card-date { font-size: 12px; color: var(--rt-ink-50); margin: 6px 0 0; }
+.rt-saved-card-link { font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--rt-ink); text-decoration: underline; text-underline-offset: 2px; }
+.rt-saved-card-remove { margin-top: 12px; align-self: flex-start; height: 40px; padding: 0 18px; border-radius: var(--rt-radius-full); }
+.rt-saved-empty { font-size: 14px; color: var(--rt-ink-50); }
+
 .rt-search-card { cursor: pointer; }
 .rt-review-panel { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rt-line-soft); cursor: default; }
 .rt-review-panel[hidden] { display: none; }
@@ -1147,6 +1163,7 @@ button, a.btn, .faq-q { min-height: 44px; }
     </div>
     <div class="header-actions" id="auth-actions-user" hidden>
       <span class="user-chip" id="user-chip"></span>
+      <button type="button" class="btn btn-secondary" id="open-saved-places">나의 담기 내역</button>
       <button type="button" class="btn btn-secondary" id="open-admin" hidden>관리자 화면</button>
       <button type="button" class="btn btn-ghost" id="logout-btn">로그아웃</button>
     </div>
@@ -1436,6 +1453,19 @@ button, a.btn, .faq-q { min-height: 44px; }
       <p id="rt-search-status" role="status" aria-live="polite"></p>
 
       <div id="rt-search-grid"></div>
+    </div>
+  </section>
+
+  <!-- ================= S7.6 나의 담기 내역 ================= -->
+  <section id="saved-places-panel" hidden>
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">나의 담기 내역</p>
+        <h2>담아둔 가게</h2>
+        <p>마음에 들어 담아둔 곳들을 모아봤어요.</p>
+      </div>
+      <p class="rt-saved-empty" id="saved-places-empty" hidden>아직 담아둔 가게가 없어요. 위에서 검색 후 담기 버튼을 눌러보세요.</p>
+      <div id="saved-places-grid" class="rt-saved-grid"></div>
     </div>
   </section>
 
@@ -1986,6 +2016,7 @@ button, a.btn, .faq-q { min-height: 44px; }
     var userChip = document.getElementById("user-chip");
     var adminBtn = document.getElementById("open-admin");
     var adminPanel = document.getElementById("admin-panel");
+    var savedPanel = document.getElementById("saved-places-panel");
 
     if (user) {
       guestActions.hidden = true;
@@ -1997,11 +2028,45 @@ button, a.btn, .faq-q { min-height: 44px; }
       } else {
         adminPanel.hidden = true;
       }
+      renderSavedPlacesPanel();
     } else {
       guestActions.hidden = false;
       userActions.hidden = true;
       adminPanel.hidden = true;
+      savedPanel.hidden = true;
     }
+  }
+
+  function renderSavedPlacesPanel() {
+    var user = currentUser();
+    var grid = document.getElementById("saved-places-grid");
+    var emptyMsg = document.getElementById("saved-places-empty");
+    if (!user || !grid) return;
+
+    var places = getSavedPlaces()
+      .filter(function (p) { return p.ownerEmail === user.email; })
+      .sort(function (a, b) { return new Date(b.savedAt) - new Date(a.savedAt); });
+
+    emptyMsg.hidden = places.length > 0;
+    grid.innerHTML = "";
+    places.forEach(function (place) {
+      var card = document.createElement("div");
+      card.className = "rt-saved-card";
+      card.innerHTML =
+        "<h3>" + escapeHtml(place.placeName) + "</h3>" +
+        "<p class=\"rt-saved-card-cat\">" + escapeHtml(place.categoryName) + "</p>" +
+        "<p class=\"rt-saved-card-addr\">" + escapeHtml(place.roadAddress) + "</p>" +
+        "<p class=\"rt-saved-card-phone\">" + escapeHtml(place.phone) + "</p>" +
+        "<p class=\"rt-saved-card-date numeric\">" + new Date(place.savedAt).toLocaleDateString("ko-KR") + " 담음</p>" +
+        "<a class=\"rt-saved-card-link\" href=\"" + escapeHtml(place.placeUrl) + "\" target=\"_blank\" rel=\"noopener noreferrer\">카카오맵에서 보기</a>" +
+        "<button type=\"button\" class=\"btn btn-secondary rt-saved-card-remove\">담기 해제</button>";
+      card.querySelector(".rt-saved-card-remove").addEventListener("click", function () {
+        togglePlaceSaved(user.email, place);
+        renderSavedPlacesPanel();
+        rtSyncSaveButtons();
+      });
+      grid.appendChild(card);
+    });
   }
 
   function renderAdminPanel() {
@@ -2030,6 +2095,13 @@ button, a.btn, .faq-q { min-height: 44px; }
   document.getElementById("open-admin").addEventListener("click", function () {
     var panel = document.getElementById("admin-panel");
     panel.hidden = false;
+    panel.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  document.getElementById("open-saved-places").addEventListener("click", function () {
+    var panel = document.getElementById("saved-places-panel");
+    panel.hidden = false;
+    renderSavedPlacesPanel();
     panel.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
   });
 
