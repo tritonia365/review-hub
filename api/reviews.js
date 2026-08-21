@@ -14,6 +14,14 @@
 //   -> mirrors Google's status code + body on a non-2xx Google response
 //   -> 200 { found: false } if nothing matches within 200m of the given coordinates
 //   -> 200 { found: true, place: {...} } on success
+//   -> 429 if the caller's IP is sending requests too fast, or if the
+//      site-wide monthly budget is exhausted (body includes a Korean
+//      `error` message with the reset time — see api/_usageBudget.js)
+//
+// This request's field mask includes `places.reviews`, which puts it on
+// Google's "Text Search Enterprise + Atmosphere" SKU — only 1,000 free
+// calls/month (not the cheaper Pro tier's 5,000), which is why the monthly
+// budget below is set relatively low.
 //
 // Places API (New) Text Search's `locationRestriction` only accepts a rectangle
 // (not a circle) and doesn't apply to name-based text queries anyway, and
@@ -36,10 +44,26 @@ function haversineMeters(lat1, lng1, lat2, lng2) {
 }
 
 var checkRateLimit = require("./_rateLimit").checkRateLimit;
+var usageBudget = require("./_usageBudget");
+// Google's free tier for this SKU is 1,000 calls/month; capping our own
+// site-wide usage (not per-IP — total across every visitor) well under
+// that means real traffic fails safely with a clear message instead of
+// the free tier silently running out partway through the month.
+var MONTHLY_BUDGET = 800;
 
 module.exports = async (req, res) => {
   if (!checkRateLimit(req, "reviews", 30, 60000)) {
     res.status(429).json({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." });
+    return;
+  }
+
+  var budget = usageBudget.checkBudget("reviews-monthly", MONTHLY_BUDGET, "month");
+  if (!budget.allowed) {
+    res.status(429).json({
+      error: "이번 달 제공되는 무료 리뷰 조회 사용량을 모두 사용했어요. " + usageBudget.formatResetKst(budget.resetAt) + " 다시 이용하실 수 있어요.",
+      reason: "monthly_budget_exceeded",
+      resetAt: budget.resetAt.toISOString()
+    });
     return;
   }
 

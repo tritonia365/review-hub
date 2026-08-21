@@ -15,9 +15,13 @@
 //   -> mirrors Gemini's status code + body on a non-2xx Gemini response
 //   -> 502 if Gemini didn't return a usable candidate, or its output doesn't
 //      parse as the requested JSON shape
+//   -> 429 if the caller's IP is sending requests too fast, or if the
+//      site-wide daily Gemini budget is exhausted (body includes a Korean
+//      `error` message with the reset time — see api/_usageBudget.js)
 //   -> 200 { sentiment: {positive,neutral,negative}, keywords: [...], summary }
 
 var checkRateLimit = require("./_rateLimit").checkRateLimit;
+var usageBudget = require("./_usageBudget");
 
 var MODEL = "gemini-3.1-flash-lite";
 // Google Places API (New) returns at most 5 reviews per place, so normal
@@ -25,6 +29,11 @@ var MODEL = "gemini-3.1-flash-lite";
 // caller that skips the UI and posts a huge fabricated array directly to
 // run up Gemini costs.
 var MAX_REVIEWS = 20;
+// Gemini's free tier is ~1,500 requests/day; capping our own site-wide
+// usage well under that (not per-IP — total across every visitor) means
+// real traffic fails safely with a clear message instead of the free tier
+// silently running out mid-day and every subsequent call erroring.
+var DAILY_BUDGET = 1200;
 
 var RESPONSE_SCHEMA = {
   type: "OBJECT",
@@ -81,6 +90,16 @@ module.exports = async (req, res) => {
 
   if (!checkRateLimit(req, "analyze", 10, 60000)) {
     res.status(429).json({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." });
+    return;
+  }
+
+  var budget = usageBudget.checkBudget("analyze-daily", DAILY_BUDGET, "day");
+  if (!budget.allowed) {
+    res.status(429).json({
+      error: "오늘 제공되는 AI 리뷰 분석 무료 사용량을 모두 사용했어요. " + usageBudget.formatResetKst(budget.resetAt) + " 다시 이용하실 수 있어요.",
+      reason: "daily_budget_exceeded",
+      resetAt: budget.resetAt.toISOString()
+    });
     return;
   }
 

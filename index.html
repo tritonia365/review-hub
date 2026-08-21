@@ -2319,10 +2319,12 @@ button, a.btn, .faq-q { min-height: 44px; }
     try {
       var res = await fetch(url);
       if (!res.ok) {
-        if (res.status === 500) {
+        var errBody = await res.json().catch(function () { return null; });
+        var serverMsg = errBody && errBody.error;
+        if (res.status === 500 && !serverMsg) {
           rtSearchStatus.textContent = "검색 기능이 아직 설정되지 않았어요. Vercel 프로젝트의 환경변수(KAKAO_REST_API_KEY)를 확인해주세요.";
         } else {
-          rtSearchStatus.textContent = "검색 중 오류가 발생했어요 (" + res.status + ").";
+          rtSearchStatus.textContent = serverMsg || ("검색 중 오류가 발생했어요 (" + res.status + ").");
         }
         return;
       }
@@ -2418,7 +2420,13 @@ button, a.btn, .faq-q { min-height: 44px; }
     try {
       var res = await fetch(url);
       if (!res.ok) {
-        rtRenderReviewPanel(panelInner, res.status === 500 ? "not-configured" : "error");
+        var errBody = await res.json().catch(function () { return null; });
+        var serverMsg = errBody && errBody.error;
+        if (res.status === 500 && !serverMsg) {
+          rtRenderReviewPanel(panelInner, "not-configured");
+        } else {
+          rtRenderReviewPanel(panelInner, "error", null, null, serverMsg);
+        }
         return;
       }
       var data = await res.json();
@@ -2434,7 +2442,7 @@ button, a.btn, .faq-q { min-height: 44px; }
     }
   }
 
-  function rtRenderReviewPanel(panelInner, state, place, placeId) {
+  function rtRenderReviewPanel(panelInner, state, place, placeId, message) {
     if (state === "loading") {
       panelInner.innerHTML = "<p class=\"rt-review-status\">리뷰를 불러오는 중...</p>";
       return;
@@ -2452,7 +2460,7 @@ button, a.btn, .faq-q { min-height: 44px; }
       return;
     }
     if (state === "error") {
-      panelInner.innerHTML = "<p class=\"rt-review-status\">리뷰를 불러오지 못했어요. 잠시 후 다시 시도해주세요.</p>";
+      panelInner.innerHTML = "<p class=\"rt-review-status\">" + escapeHtml(message || "리뷰를 불러오지 못했어요. 잠시 후 다시 시도해주세요.") + "</p>";
       return;
     }
 
@@ -2521,7 +2529,13 @@ button, a.btn, .faq-q { min-height: 44px; }
         })
       });
       if (!res.ok) {
-        rtRenderAiAnalysis(aiBody, res.status === 500 ? "not-configured" : "error");
+        var errBody = await res.json().catch(function () { return null; });
+        var serverMsg = errBody && errBody.error;
+        if (res.status === 500 && !serverMsg) {
+          rtRenderAiAnalysis(aiBody, "not-configured");
+        } else {
+          rtRenderAiAnalysis(aiBody, "error", null, serverMsg);
+        }
         return;
       }
       var data = await res.json();
@@ -2532,7 +2546,7 @@ button, a.btn, .faq-q { min-height: 44px; }
     }
   }
 
-  function rtRenderAiAnalysis(aiBody, state, data) {
+  function rtRenderAiAnalysis(aiBody, state, data, message) {
     if (state === "loading") {
       aiBody.innerHTML = "<p class=\"rt-ai-status\">AI가 리뷰를 분석 하는 중...</p>";
       return;
@@ -2542,7 +2556,7 @@ button, a.btn, .faq-q { min-height: 44px; }
       return;
     }
     if (state === "error") {
-      aiBody.innerHTML = "<p class=\"rt-ai-status\">AI 분석을 불러오지 못했어요. 잠시 후 다시 시도해주세요.</p>";
+      aiBody.innerHTML = "<p class=\"rt-ai-status\">" + escapeHtml(message || "AI 분석을 불러오지 못했어요. 잠시 후 다시 시도해주세요.") + "</p>";
       return;
     }
 
