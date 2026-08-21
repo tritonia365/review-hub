@@ -1045,8 +1045,6 @@ button, a.btn, .faq-q { min-height: 44px; }
 }
 .modal-hint { margin-top: 14px; font-size: 12px; color: var(--rt-ink-50); text-align: center; }
 
-#admin-panel { background: var(--rt-paper-deep); }
-
 /* ---- Restaurant search (Airbnb-style reskin; logic owns the JS behavior) ---- */
 #rt-search-form { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
 #rt-search-form input { flex: 1; min-width: 200px; }
@@ -1158,13 +1156,12 @@ button, a.btn, .faq-q { min-height: 44px; }
       <span class="en">Real Table</span>
     </a>
     <div class="header-actions" id="auth-actions-guest">
-      <button type="button" class="btn btn-ghost" id="open-login">로그인</button>
-      <button type="button" class="btn btn-primary" id="open-signup">회원가입</button>
+      <button type="button" class="btn btn-primary" id="open-login">로그인</button>
     </div>
     <div class="header-actions" id="auth-actions-user" hidden>
       <span class="user-chip" id="user-chip"></span>
       <button type="button" class="btn btn-secondary" id="open-saved-places">나의 담기 내역</button>
-      <button type="button" class="btn btn-secondary" id="open-admin" hidden>관리자 화면</button>
+      <button type="button" class="btn btn-secondary" id="open-mypage">마이페이지</button>
       <button type="button" class="btn btn-ghost" id="logout-btn">로그아웃</button>
     </div>
   </div>
@@ -1515,29 +1512,6 @@ button, a.btn, .faq-q { min-height: 44px; }
     </div>
   </section>
 
-  <!-- ================= 관리자 전용 (로그인 시에만 노출) ================= -->
-  <section id="admin-panel" hidden>
-    <div class="container">
-      <div class="section-head">
-        <p class="eyebrow">관리자 전용</p>
-        <h2>가입자 현황</h2>
-        <p>데모 화면입니다. 실제 권한 체계·감사 로그는 Phase 1에서 Supabase로 구현됩니다.</p>
-      </div>
-      <div class="insight-card" style="max-width:760px;">
-        <p class="desc" style="margin:0 0 16px;">총 가입자 <strong class="numeric" id="admin-user-count">0</strong>명</p>
-        <div style="overflow-x:auto;">
-          <table class="data-table is-active">
-            <caption class="visually-hidden">가입자 목록</caption>
-            <thead>
-              <tr><th scope="col">닉네임</th><th scope="col">이메일</th><th scope="col">역할</th><th scope="col">가입일시</th></tr>
-            </thead>
-            <tbody id="admin-user-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ================= S10. FAQ ================= -->
   <section id="faq">
     <div class="container">
@@ -1640,7 +1614,6 @@ button, a.btn, .faq-q { min-height: 44px; }
       <button type="submit" class="btn btn-primary" style="width:100%;">로그인</button>
     </form>
     <p class="modal-switch">계정이 없으신가요? <button type="button" class="link-btn" data-switch-to="signup">회원가입</button></p>
-    <p class="modal-hint">데모용 관리자 계정: admin@realtable.kr / RealTable!2026</p>
   </div>
 
   <div class="modal" id="modal-signup" role="dialog" aria-modal="true" aria-labelledby="signup-title" hidden>
@@ -1648,15 +1621,11 @@ button, a.btn, .faq-q { min-height: 44px; }
     <h2 id="signup-title">회원가입</h2>
     <form id="signup-form-modal" novalidate>
       <div class="form-group">
-        <label for="signup-nickname">닉네임 (2~12자)</label>
-        <input class="field-input" type="text" id="signup-nickname" name="nickname" minlength="2" maxlength="12" required>
-      </div>
-      <div class="form-group">
         <label for="signup-email-modal">이메일 주소</label>
         <input class="field-input" type="email" id="signup-email-modal" name="email" autocomplete="email" required>
       </div>
       <div class="form-group">
-        <label for="signup-password">비밀번호 (8자 이상, 영문·숫자·특수문자 중 2종 이상)</label>
+        <label for="signup-password">비밀번호 (8자 이상)</label>
         <input class="field-input" type="password" id="signup-password" name="password" autocomplete="new-password" required>
       </div>
       <div class="form-group">
@@ -1672,13 +1641,64 @@ button, a.btn, .faq-q { min-height: 44px; }
     </form>
     <p class="modal-switch">이미 계정이 있으신가요? <button type="button" class="link-btn" data-switch-to="login">로그인</button></p>
   </div>
+
+  <div class="modal" id="modal-mypage" role="dialog" aria-modal="true" aria-labelledby="mypage-title" hidden>
+    <button type="button" class="modal-close" aria-label="닫기" data-close-modal>&times;</button>
+    <h2 id="mypage-title">마이페이지</h2>
+    <p style="font-size:13px; color:var(--rt-ink-70); margin:-8px 0 20px;">로그인 이메일: <strong id="mypage-email"></strong></p>
+
+    <form id="change-password-form" novalidate>
+      <div class="form-group">
+        <label for="mypage-current-password">현재 비밀번호</label>
+        <input class="field-input" type="password" id="mypage-current-password" name="currentPassword" autocomplete="current-password" required>
+      </div>
+      <div class="form-group">
+        <label for="mypage-new-password">새 비밀번호 (8자 이상)</label>
+        <input class="field-input" type="password" id="mypage-new-password" name="newPassword" autocomplete="new-password" required>
+      </div>
+      <div class="form-group">
+        <label for="mypage-new-password-confirm">새 비밀번호 확인</label>
+        <input class="field-input" type="password" id="mypage-new-password-confirm" name="newPasswordConfirm" autocomplete="new-password" required>
+      </div>
+      <p class="field-error" id="change-password-error" role="alert"></p>
+      <p class="field-error" id="change-password-success" role="status" style="color:var(--rt-green);"></p>
+      <button type="submit" class="btn btn-primary" style="width:100%;">비밀번호 변경</button>
+    </form>
+
+    <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--rt-line);">
+      <h3 style="font-size:15px; margin-bottom:8px;">회원 탈퇴</h3>
+      <p style="font-size:13px; color:var(--rt-ink-70); margin:0 0 12px;">탈퇴하면 계정과 담아둔 가게 목록이 모두 삭제되며 복구할 수 없습니다.</p>
+      <div class="form-group">
+        <label for="mypage-delete-password">비밀번호 확인</label>
+        <input class="field-input" type="password" id="mypage-delete-password" name="deletePassword" autocomplete="current-password">
+      </div>
+      <p class="field-error" id="delete-account-error" role="alert"></p>
+      <button type="button" class="btn btn-secondary" id="delete-account-btn" style="width:100%; border-color:var(--rt-red); color:var(--rt-red);">회원 탈퇴</button>
+      <button type="button" class="btn btn-secondary" id="delete-account-confirm-btn" style="width:100%; margin-top:10px; background:var(--rt-red); color:#fff; border-color:var(--rt-red);" hidden>정말 탈퇴하시겠습니까? 다시 눌러 확인</button>
+    </div>
+  </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function () {
   "use strict";
 
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------------- Supabase client ----------------
+     anon/publishable key is safe to ship to the browser (Supabase's RLS,
+     not key secrecy, is what protects the data) — unlike the Kakao/Google/
+     Gemini keys in api/*.js, this one is not proxied server-side. */
+  var SUPABASE_URL = "https://qpeyzjsmikuchthtntjq.supabase.co";
+  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZXl6anNtaWt1Y2h0aHRudGpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyODIzNjcsImV4cCI6MjEwMjg1ODM2N30.J2TwHKzd0cS3cu4yaP6Xx0xSWNiCj_CTAICcKIE7NnA";
+  var supabaseClient = (window.supabase && window.supabase.createClient)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
+
+  if (!supabaseClient) {
+    console.error("[Supabase] supabase-js 로드 실패 — CDN 스크립트를 확인하세요.");
+  }
 
   /* ---------------- Reveal on scroll ---------------- */
   var revealEls = document.querySelectorAll(".reveal");
@@ -1859,121 +1879,34 @@ button, a.btn, .faq-q { min-height: 44px; }
   });
 
   /* ================================================================
-     Auth — client-side demo only (localStorage). No real backend yet;
-     Phase 1 (§17.2) replaces this with Supabase Auth.
+     Auth — real accounts via Supabase Auth (email + password). Session
+     storage, token refresh, and password handling are entirely owned
+     by Supabase; this file never sees or stores a raw password beyond
+     handing it straight to supabase-js for a single request.
      ================================================================ */
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  var USERS_KEY = "rt_users";
-  var SESSION_KEY = "rt_session";
-  var ADMIN_EMAIL = "admin@realtable.kr";
-  var ADMIN_PASSWORD = "RealTable!2026";
-  var FORBIDDEN_NICKNAMES = ["관리자", "admin", "운영자", "realtable"];
-  var AVATAR_EMOJIS = ["🐟","🍷","🥐","🍊","🌿","🥂","🍋","🍇","🥖","🍓"];
+  var currentSupabaseUser = null;
 
-  function getUsers() {
-    try { return JSON.parse(window.localStorage.getItem(USERS_KEY) || "[]"); }
-    catch (e) { return []; }
-  }
-  function saveUsers(list) {
-    try { window.localStorage.setItem(USERS_KEY, JSON.stringify(list)); } catch (e) {}
-  }
-  function findUserByEmail(email) {
-    return getUsers().filter(function (u) { return u.email.toLowerCase() === email.toLowerCase(); })[0] || null;
-  }
-  function findUserByNickname(nickname) {
-    return getUsers().filter(function (u) { return u.nickname === nickname; })[0] || null;
-  }
-  function pickAvatar(seed) {
-    var sum = 0;
-    for (var i = 0; i < seed.length; i++) sum += seed.charCodeAt(i);
-    return AVATAR_EMOJIS[sum % AVATAR_EMOJIS.length];
-  }
-  function passwordStrengthOk(pw) {
-    if (pw.length < 8) return false;
-    var kinds = 0;
-    if (/[a-zA-Z]/.test(pw)) kinds++;
-    if (/[0-9]/.test(pw)) kinds++;
-    if (/[^a-zA-Z0-9]/.test(pw)) kinds++;
-    return kinds >= 2;
-  }
-  async function sha256(text) {
-    var enc = new TextEncoder().encode(text);
-    var buf = await crypto.subtle.digest("SHA-256", enc);
-    return Array.prototype.map.call(new Uint8Array(buf), function (b) {
-      return b.toString(16).padStart(2, "0");
-    }).join("");
-  }
-
-  function generateAutoNickname(email) {
-    var local = (email.split("@")[0] || "guest");
-    var base = local.replace(/[^a-zA-Z0-9가-힣]/g, "");
-    if (base.length > 12) base = base.slice(0, 12);
-    if (base.length < 2) base = (base + "guest").slice(0, 12);
-    function forbidden(name) {
-      return FORBIDDEN_NICKNAMES.some(function (w) { return name.toLowerCase().indexOf(w.toLowerCase()) !== -1; });
-    }
-    if (forbidden(base)) base = "guest";
-    var candidate = base;
-    var n = 1;
-    while (findUserByNickname(candidate) || forbidden(candidate)) {
-      var suffix = String(n);
-      candidate = (base.slice(0, Math.max(2, 12 - suffix.length)) + suffix).slice(0, 12);
-      n++;
-      if (n > 999) { candidate = "guest" + String(Date.now()).slice(-4); break; }
-    }
-    return candidate;
-  }
-
-  async function createAutoAccount(email, password) {
-    var users = getUsers();
-    var nickname = generateAutoNickname(email);
-    var user = {
-      email: email,
-      passwordHash: await sha256(password),
-      nickname: nickname,
-      avatar: pickAvatar(nickname + email),
-      role: "guest",
-      createdAt: new Date().toISOString()
-    };
-    users.push(user);
-    saveUsers(users);
-    return user;
-  }
-
-  async function seedAdmin() {
-    if (findUserByEmail(ADMIN_EMAIL)) return;
-    var users = getUsers();
-    users.push({
-      email: ADMIN_EMAIL,
-      passwordHash: await sha256(ADMIN_PASSWORD),
-      nickname: "관리자",
-      avatar: "🛡",
-      role: "admin",
-      createdAt: new Date().toISOString()
-    });
-    saveUsers(users);
-  }
-
-  function getSession() {
-    try { return JSON.parse(window.localStorage.getItem(SESSION_KEY) || "null"); }
-    catch (e) { return null; }
-  }
-  function setSession(email) {
-    window.localStorage.setItem(SESSION_KEY, JSON.stringify({ email: email }));
-  }
-  function clearSession() {
-    window.localStorage.removeItem(SESSION_KEY);
-  }
   function currentUser() {
-    var session = getSession();
-    return session ? findUserByEmail(session.email) : null;
+    return currentSupabaseUser;
+  }
+
+  function mapAuthError(message, fallback) {
+    var m = String(message || "");
+    if (/invalid login credentials/i.test(m)) return "이메일 또는 비밀번호가 올바르지 않습니다.";
+    if (/email not confirmed/i.test(m)) return "이메일 인증이 필요합니다. 메일함을 확인해주세요.";
+    if (/already registered|already exists/i.test(m)) return "이미 가입된 이메일이에요.";
+    if (/password should be at least/i.test(m)) return "비밀번호는 8자 이상이어야 해요.";
+    if (/rate limit/i.test(m)) return "요청이 너무 많아요. 잠시 후 다시 시도해주세요.";
+    return fallback || "요청 처리 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.";
   }
 
   /* ---------------- Modal ---------------- */
   var overlay = document.getElementById("modal-overlay");
   var modals = {
     login: document.getElementById("modal-login"),
-    signup: document.getElementById("modal-signup")
+    signup: document.getElementById("modal-signup"),
+    mypage: document.getElementById("modal-mypage")
   };
   var lastFocused = null;
 
@@ -2003,7 +1936,7 @@ button, a.btn, .faq-q { min-height: 44px; }
     var el = document.getElementById(id);
     if (el) el.addEventListener("click", function () { openModal("login"); });
   });
-  ["open-signup", "hero-open-signup", "cta-open-signup"].forEach(function (id) {
+  ["hero-open-signup", "cta-open-signup"].forEach(function (id) {
     var el = document.getElementById(id);
     if (el) el.addEventListener("click", function () { openModal("signup"); });
   });
@@ -2014,25 +1947,16 @@ button, a.btn, .faq-q { min-height: 44px; }
     var guestActions = document.getElementById("auth-actions-guest");
     var userActions = document.getElementById("auth-actions-user");
     var userChip = document.getElementById("user-chip");
-    var adminBtn = document.getElementById("open-admin");
-    var adminPanel = document.getElementById("admin-panel");
     var savedPanel = document.getElementById("saved-places-panel");
 
     if (user) {
       guestActions.hidden = true;
       userActions.hidden = false;
-      userChip.textContent = user.avatar + " " + user.nickname + "님" + (user.role === "admin" ? " · 관리자" : "");
-      adminBtn.hidden = user.role !== "admin";
-      if (user.role === "admin") {
-        renderAdminPanel();
-      } else {
-        adminPanel.hidden = true;
-      }
+      userChip.textContent = (user.email.split("@")[0] || user.email) + "님";
       renderSavedPlacesPanel();
     } else {
       guestActions.hidden = false;
       userActions.hidden = true;
-      adminPanel.hidden = true;
       savedPanel.hidden = true;
     }
   }
@@ -2044,7 +1968,7 @@ button, a.btn, .faq-q { min-height: 44px; }
     if (!user || !grid) return;
 
     var places = getSavedPlaces()
-      .filter(function (p) { return p.ownerEmail === user.email; })
+      .filter(function (p) { return p.ownerId === user.id; })
       .sort(function (a, b) { return new Date(b.savedAt) - new Date(a.savedAt); });
 
     emptyMsg.hidden = places.length > 0;
@@ -2061,42 +1985,13 @@ button, a.btn, .faq-q { min-height: 44px; }
         "<a class=\"rt-saved-card-link\" href=\"" + escapeHtml(place.placeUrl) + "\" target=\"_blank\" rel=\"noopener noreferrer\">카카오맵에서 보기</a>" +
         "<button type=\"button\" class=\"btn btn-secondary rt-saved-card-remove\">담기 해제</button>";
       card.querySelector(".rt-saved-card-remove").addEventListener("click", function () {
-        togglePlaceSaved(user.email, place);
+        togglePlaceSaved(user.id, place);
         renderSavedPlacesPanel();
         rtSyncSaveButtons();
       });
       grid.appendChild(card);
     });
   }
-
-  function renderAdminPanel() {
-    var users = getUsers();
-    document.getElementById("admin-user-count").textContent = users.length;
-    var body = document.getElementById("admin-user-table-body");
-    body.innerHTML = "";
-    users.slice().sort(function (a, b) {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    }).forEach(function (u) {
-      var tr = document.createElement("tr");
-      var nickTd = document.createElement("td");
-      nickTd.textContent = u.avatar + " " + u.nickname;
-      var emailTd = document.createElement("td");
-      emailTd.textContent = u.email;
-      var roleTd = document.createElement("td");
-      roleTd.textContent = u.role === "admin" ? "관리자" : "손님";
-      var dateTd = document.createElement("td");
-      dateTd.className = "numeric";
-      dateTd.textContent = new Date(u.createdAt).toLocaleString("ko-KR");
-      tr.append(nickTd, emailTd, roleTd, dateTd);
-      body.appendChild(tr);
-    });
-  }
-
-  document.getElementById("open-admin").addEventListener("click", function () {
-    var panel = document.getElementById("admin-panel");
-    panel.hidden = false;
-    panel.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
-  });
 
   document.getElementById("open-saved-places").addEventListener("click", function () {
     var panel = document.getElementById("saved-places-panel");
@@ -2105,17 +2000,16 @@ button, a.btn, .faq-q { min-height: 44px; }
     panel.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
   });
 
-  document.getElementById("logout-btn").addEventListener("click", function () {
-    clearSession();
-    renderAuthState();
+  document.getElementById("logout-btn").addEventListener("click", async function () {
+    await supabaseClient.auth.signOut();
   });
 
-  /* ---------------- Login form (auto-signup on unknown email) ---------------- */
-  (function () {
-    var loginModalHint = document.querySelector("#modal-login .modal-hint");
-    if (loginModalHint) loginModalHint.textContent += " · 계정이 없으면 자동으로 만들어져요.";
-  })();
+  document.getElementById("open-mypage").addEventListener("click", function () {
+    populateMypage();
+    openModal("mypage");
+  });
 
+  /* ---------------- Login form ---------------- */
   document.getElementById("login-form").addEventListener("submit", async function (e) {
     e.preventDefault();
     var email = document.getElementById("login-email").value.trim();
@@ -2134,28 +2028,24 @@ button, a.btn, .faq-q { min-height: 44px; }
       return;
     }
 
-    var user = findUserByEmail(email);
-    if (user) {
-      var hash = await sha256(password);
-      if (user.passwordHash !== hash) {
-        errorEl.textContent = "이메일 또는 비밀번호가 올바르지 않습니다.";
-        errorEl.classList.add("is-active");
-        return;
-      }
-    } else {
-      user = await createAutoAccount(email, password);
+    var submitBtn = e.target.querySelector("button[type=submit]");
+    submitBtn.disabled = true;
+    var res = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+    submitBtn.disabled = false;
+
+    if (res.error) {
+      errorEl.textContent = mapAuthError(res.error.message, "로그인 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
+      errorEl.classList.add("is-active");
+      return;
     }
 
-    setSession(user.email);
     e.target.reset();
     closeModal();
-    renderAuthState();
   });
 
-  /* ---------------- Signup form ---------------- */
+  /* ---------------- Signup form (auto-login on success) ---------------- */
   document.getElementById("signup-form-modal").addEventListener("submit", async function (e) {
     e.preventDefault();
-    var nickname = document.getElementById("signup-nickname").value.trim();
     var email = document.getElementById("signup-email-modal").value.trim();
     var password = document.getElementById("signup-password").value;
     var passwordConfirm = document.getElementById("signup-password-confirm").value;
@@ -2168,31 +2058,137 @@ button, a.btn, .faq-q { min-height: 44px; }
       errorEl.classList.add("is-active");
     }
 
-    if (nickname.length < 2 || nickname.length > 12) return fail("닉네임은 2~12자로 입력해 주세요.");
-    if (FORBIDDEN_NICKNAMES.some(function (w) { return nickname.toLowerCase().indexOf(w.toLowerCase()) !== -1; })) {
-      return fail("사용할 수 없는 닉네임이에요.");
-    }
-    if (findUserByNickname(nickname)) return fail("이미 사용 중인 닉네임이에요.");
     if (!EMAIL_RE.test(email)) return fail("올바른 이메일 주소를 입력해 주세요.");
-    if (findUserByEmail(email)) return fail("이미 가입된 이메일이에요.");
-    if (!passwordStrengthOk(password)) return fail("비밀번호는 8자 이상이며 영문·숫자·특수문자 중 2종 이상을 포함해야 해요.");
+    if (password.length < 8) return fail("비밀번호는 8자 이상이어야 해요.");
     if (password !== passwordConfirm) return fail("비밀번호가 일치하지 않아요.");
     if (!ageChecked) return fail("만 14세 이상만 가입할 수 있어요.");
 
-    var users = getUsers();
-    users.push({
-      email: email,
-      passwordHash: await sha256(password),
-      nickname: nickname,
-      avatar: pickAvatar(nickname + email),
-      role: "guest",
-      createdAt: new Date().toISOString()
-    });
-    saveUsers(users);
-    setSession(email);
+    var submitBtn = e.target.querySelector("button[type=submit]");
+    submitBtn.disabled = true;
+    var res = await supabaseClient.auth.signUp({ email: email, password: password });
+    submitBtn.disabled = false;
+
+    if (res.error) {
+      return fail(mapAuthError(res.error.message, "회원가입 중 오류가 발생했어요. 잠시 후 다시 시도해주세요."));
+    }
+    if (res.data && res.data.user && Array.isArray(res.data.user.identities) && res.data.user.identities.length === 0) {
+      return fail("이미 가입된 이메일이에요.");
+    }
+    if (!res.data || !res.data.session) {
+      return fail("가입은 완료됐지만 자동 로그인에 실패했어요. 로그인 화면에서 다시 시도해주세요.");
+    }
+
     e.target.reset();
     closeModal();
-    renderAuthState();
+  });
+
+  /* ---------------- 마이페이지: 비밀번호 변경 · 회원 탈퇴 ---------------- */
+  function populateMypage() {
+    var user = currentUser();
+    document.getElementById("mypage-email").textContent = user ? user.email : "";
+    document.getElementById("change-password-form").reset();
+    document.getElementById("mypage-delete-password").value = "";
+    document.getElementById("delete-account-confirm-btn").hidden = true;
+    ["change-password-error", "change-password-success", "delete-account-error"].forEach(function (id) {
+      var el = document.getElementById(id);
+      el.textContent = "";
+      el.classList.remove("is-active");
+    });
+  }
+
+  document.getElementById("change-password-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var user = currentUser();
+    if (!user) return;
+
+    var current = document.getElementById("mypage-current-password").value;
+    var next = document.getElementById("mypage-new-password").value;
+    var confirmPw = document.getElementById("mypage-new-password-confirm").value;
+    var errorEl = document.getElementById("change-password-error");
+    var successEl = document.getElementById("change-password-success");
+    errorEl.classList.remove("is-active");
+    successEl.classList.remove("is-active");
+
+    function fail(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add("is-active");
+    }
+
+    if (!current) return fail("현재 비밀번호를 입력해 주세요.");
+    if (next.length < 8) return fail("새 비밀번호는 8자 이상이어야 해요.");
+    if (next !== confirmPw) return fail("새 비밀번호가 일치하지 않아요.");
+
+    var submitBtn = e.target.querySelector("button[type=submit]");
+    submitBtn.disabled = true;
+
+    var reauth = await supabaseClient.auth.signInWithPassword({ email: user.email, password: current });
+    if (reauth.error) {
+      submitBtn.disabled = false;
+      return fail("현재 비밀번호가 올바르지 않습니다.");
+    }
+
+    var updateRes = await supabaseClient.auth.updateUser({ password: next });
+    submitBtn.disabled = false;
+    if (updateRes.error) {
+      return fail(mapAuthError(updateRes.error.message, "비밀번호 변경 중 오류가 발생했어요. 잠시 후 다시 시도해주세요."));
+    }
+
+    successEl.textContent = "비밀번호가 변경되었습니다.";
+    successEl.classList.add("is-active");
+    e.target.reset();
+  });
+
+  document.getElementById("delete-account-btn").addEventListener("click", function () {
+    var pwd = document.getElementById("mypage-delete-password").value;
+    var errorEl = document.getElementById("delete-account-error");
+    errorEl.classList.remove("is-active");
+    if (!pwd) {
+      errorEl.textContent = "비밀번호를 입력해 주세요.";
+      errorEl.classList.add("is-active");
+      return;
+    }
+    document.getElementById("delete-account-confirm-btn").hidden = false;
+  });
+
+  document.getElementById("delete-account-confirm-btn").addEventListener("click", async function () {
+    var btn = this;
+    var user = currentUser();
+    if (!user) return;
+    var pwd = document.getElementById("mypage-delete-password").value;
+    var errorEl = document.getElementById("delete-account-error");
+    errorEl.classList.remove("is-active");
+
+    function fail(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add("is-active");
+    }
+
+    btn.disabled = true;
+
+    var reauth = await supabaseClient.auth.signInWithPassword({ email: user.email, password: pwd });
+    if (reauth.error) {
+      btn.disabled = false;
+      return fail("비밀번호가 올바르지 않습니다.");
+    }
+
+    var sessionRes = await supabaseClient.auth.getSession();
+    var accessToken = sessionRes.data && sessionRes.data.session && sessionRes.data.session.access_token;
+
+    try {
+      var res = await fetch("/api/delete-account", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + accessToken }
+      });
+      if (!res.ok) {
+        btn.disabled = false;
+        return fail("회원 탈퇴 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
+      }
+      await supabaseClient.auth.signOut();
+      closeModal();
+    } catch (err) {
+      btn.disabled = false;
+      fail("회원 탈퇴 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
+    }
   });
 
   /* ================================================================
@@ -2213,14 +2209,14 @@ button, a.btn, .faq-q { min-height: 44px; }
   function setSavedPlaces(list) {
     try { window.localStorage.setItem(SAVED_PLACES_KEY, JSON.stringify(list)); } catch (e) {}
   }
-  function isPlaceSaved(ownerEmail, placeId) {
-    return getSavedPlaces().some(function (p) { return p.ownerEmail === ownerEmail && p.placeId === placeId; });
+  function isPlaceSaved(ownerId, placeId) {
+    return getSavedPlaces().some(function (p) { return p.ownerId === ownerId && p.placeId === placeId; });
   }
-  function togglePlaceSaved(ownerEmail, place) {
+  function togglePlaceSaved(ownerId, place) {
     var list = getSavedPlaces();
     var idx = -1;
     for (var i = 0; i < list.length; i++) {
-      if (list[i].ownerEmail === ownerEmail && list[i].placeId === place.placeId) { idx = i; break; }
+      if (list[i].ownerId === ownerId && list[i].placeId === place.placeId) { idx = i; break; }
     }
     if (idx >= 0) {
       list.splice(idx, 1);
@@ -2228,7 +2224,7 @@ button, a.btn, .faq-q { min-height: 44px; }
       return false;
     }
     list.push({
-      ownerEmail: ownerEmail,
+      ownerId: ownerId,
       placeId: place.placeId,
       placeName: place.placeName,
       categoryName: place.categoryName,
@@ -2359,7 +2355,7 @@ button, a.btn, .faq-q { min-height: 44px; }
     places.forEach(function (place) {
       var card = document.createElement("div");
       card.className = "rt-search-card";
-      var saved = user ? isPlaceSaved(user.email, place.placeId) : false;
+      var saved = user ? isPlaceSaved(user.id, place.placeId) : false;
       card.innerHTML =
         "<h3>" + escapeHtml(place.placeName) + "</h3>" +
         "<p class=\"rt-search-card-cat\">" + escapeHtml(place.categoryName) + "</p>" +
@@ -2373,7 +2369,7 @@ button, a.btn, .faq-q { min-height: 44px; }
       saveBtn.addEventListener("click", function () {
         var u = currentUser();
         if (!u) { openModal("login"); return; }
-        var nowSaved = togglePlaceSaved(u.email, place);
+        var nowSaved = togglePlaceSaved(u.id, place);
         saveBtn.textContent = nowSaved ? "담음" : "담기";
         saveBtn.classList.toggle("is-saved", nowSaved);
       });
@@ -2594,7 +2590,7 @@ button, a.btn, .faq-q { min-height: 44px; }
       var place = rtLastResults[i];
       var btn = card.querySelector(".rt-search-card-save");
       if (!place || !btn) return;
-      var saved = user ? isPlaceSaved(user.email, place.placeId) : false;
+      var saved = user ? isPlaceSaved(user.id, place.placeId) : false;
       btn.textContent = saved ? "담음" : "담기";
       btn.classList.toggle("is-saved", saved);
     });
@@ -2606,7 +2602,18 @@ button, a.btn, .faq-q { min-height: 44px; }
     rtSyncSaveButtons();
   };
 
-  seedAdmin().then(renderAuthState);
+  if (supabaseClient) {
+    supabaseClient.auth.getSession().then(function (res) {
+      currentSupabaseUser = (res.data && res.data.session && res.data.session.user) || null;
+      renderAuthState();
+    });
+    supabaseClient.auth.onAuthStateChange(function (event, session) {
+      currentSupabaseUser = (session && session.user) || null;
+      renderAuthState();
+    });
+  } else {
+    renderAuthState();
+  }
 })();
 </script>
 

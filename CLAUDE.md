@@ -8,9 +8,10 @@ Spec + implementation for **리얼 테이블 (Real Table)**, a Seoul-only restau
 
 - `PRD_1.md` — full product requirements (all phases, Phase 0 through Phase 3+).
 - `DESIGN_2.md` — the visual design system.
-- `index.html` — the only code artifact: a single self-contained static HTML file implementing the Phase 0 landing page plus a client-side auth demo.
+- `index.html` — the main code artifact: a single self-contained static HTML file implementing the Phase 0 landing page plus real Supabase-backed auth.
+- `api/*.js` — Vercel serverless functions that proxy third-party API keys (Kakao, Google Places, Gemini) and handle Supabase Auth Admin operations (`delete-account.js`) server-side, so those keys never reach the browser.
 
-There is no build system, package manager, test suite, or backend in this repo. Not a git repository.
+There is no build system, package manager, or test suite in this repo. The only backend is the `api/*.js` Vercel serverless functions (plain Node, no npm dependencies) plus the Supabase project's built-in Auth — there is no custom database/application server.
 
 ## Commands
 
@@ -41,23 +42,25 @@ Other DESIGN_2.md rules baked into the current CSS that matter when extending it
 Single file, three parts in order:
 
 1. **`<style>` block** (~L34–994): CSS custom properties under `:root` are a 1:1 mapping of DESIGN_2.md §14.1 tokens (`--rt-paper`, `--rt-ink`, `--rt-yellow`, `--rt-gold`, spacing/radius/shadow/motion scales). Component styles follow, then per-section styles in the same order as the markup.
-2. **HTML body**: sticky header → `#hero` → content sections in PRD_1.md §16.2's S2–S11 order (`#problem`, `#principles`, `#usecases`, `#trust`, `#insights`, `#billboard`, `#roadmap`, `#signup`, `#admin-panel`, `#faq`) → footer → auth modals (`#modal-login`, `#modal-signup`) at the end of `<body>`.
+2. **HTML body**: sticky header → `#hero` → content sections in PRD_1.md §16.2's S2–S11 order (`#problem`, `#principles`, `#usecases`, `#trust`, `#insights`, `#billboard`, `#roadmap`, `#signup`, `#faq`) → footer → auth modals (`#modal-login`, `#modal-signup`, `#modal-mypage`) at the end of `<body>`.
 3. **`<script>` IIFE** (~L1480–1904): scroll-reveal via `IntersectionObserver` (`.reveal` class), an animated donut chart (rating distribution) drawn with `conic-gradient` progressed via `requestAnimationFrame` rather than an SVG/canvas library, a word cloud (font-size on a sqrt scale of mention count, top 3 in gold), a FAQ accordion, and the auth system described below. All motion respects `prefers-reduced-motion`.
 
 ### `#insights` section data is intentionally fake
 
 The rating-distribution donut and the keyword word cloud are static example arrays hardcoded in the script (`ratingData`, `keywords`), explicitly labeled "예시 데이터입니다" in the markup per PRD_1.md §16.2 (S6 requires dummy data marked as an example — real aggregation is Phase 0.5/1 work described in PRD_1.md §8 and §11.3, not implemented here). Both have an accessible fallback: a hidden `<table>` toggled into view via a "표로 보기" / "키워드 목록 보기" button, per PRD_1.md §11.2/§11.3's requirement that screen readers get the same data as the chart. Preserve that toggle pattern if you touch this section.
 
-### Auth is a client-side mock, not real backend integration
+### Auth is real Supabase Auth (email + password), ahead of PRD_1.md's phase gate
 
-PRD_1.md stages real auth (Supabase) into Phase 1 (§17.2); Phase 0 per the PRD is landing-page-only with no login. This repo's `index.html` intentionally goes beyond that PRD scope — login/signup/admin were added on explicit user request, with no backend available, so they're implemented as a `localStorage`-only simulation:
+PRD_1.md stages real auth into Phase 1 (§17.2); Phase 0 per the PRD is landing-page-only with no login. This repo's `index.html` intentionally goes beyond that PRD scope on explicit user request — login/signup/mypage are wired to a real Supabase project (`qpeyzjsmikuchthtntjq`, see `.env.example`), not a mock:
 
-- `rt_users` — array of `{ email, passwordHash (SHA-256 via `crypto.subtle`), nickname, avatar, role: "guest"|"admin", createdAt }`.
-- `rt_session` — `{ email }` of the currently "logged in" user.
-- An admin account is auto-seeded on first load: `admin@realtable.kr` / `RealTable!2026` (see `seedAdmin()`). Logging in with it reveals `#admin-panel`, a read-only table of everyone who has signed up in that browser.
-- Signup validation intentionally mirrors PRD_1.md §5.2/§5.4 rules: nickname 2–12 chars + uniqueness + a forbidden-word list blocking impersonation of "admin"/"관리자", password ≥8 chars with ≥2 of {letters, digits, symbols}, age-14+ checkbox.
+- The client (`supabase-js@2`, loaded via CDN) is created once at the top of the `<script>` IIFE with the project URL + anon/publishable key — safe to ship, since RLS (not key secrecy) is what would protect any real tables. No tables exist yet; auth alone doesn't need any (Supabase's built-in `auth.users` covers it), so there is no `profiles` table.
+- No nickname/avatar concept — the signup form only collects email + password (plus an age-14+ checkbox mirroring PRD_1.md §5.4). The header/mypage display name is derived client-side from the email's local-part (`user.email.split("@")[0]`).
+- `currentUser()` returns the live Supabase `user` object (or `null`), kept in sync via `supabaseClient.auth.onAuthStateChange` + an initial `getSession()` call — this is the single source of truth other features (e.g. the "나의 담기" save button) should call to check who's logged in. Session persistence/refresh across reloads is handled entirely by supabase-js's default localStorage-backed session storage — don't hand-roll it.
+- Password changes and account deletion live in the `#modal-mypage` modal. Both re-authenticate via `signInWithPassword` before acting (defense against a stolen/left-open session): change-password then calls `supabaseClient.auth.updateUser({ password })`; delete-account calls the `/api/delete-account` Vercel function (server-side, using `SUPABASE_SERVICE_ROLE_KEY`) since deleting an auth user requires the Admin API, which the anon key cannot call.
+- Korean error messages are centralized in `mapAuthError()` — extend that map rather than inlining new error-string checks at each call site.
+- "이메일 인증 대기" (email confirmation) is intentionally skipped for now, per explicit user request — this requires **"Confirm email" to be turned off in the Supabase Dashboard** (Authentication → Sign In / Providers → Email), which cannot be set via the MCP tools available in this repo's session. If signup ever stops auto-logging-in and instead shows "가입은 완료됐지만 자동 로그인에 실패했어요," check that setting first.
 
-This has no real security or persistence guarantees (visible in devtools, per-browser only, no rate limiting). Don't extend this mock further under the assumption it's a real auth system — if real accounts are needed, that's a Supabase integration per PRD_1.md §17.2–§17.4, not more localStorage code.
+There is no admin panel / admin role in this implementation (the earlier mock's `admin@realtable.kr` seed account and `#admin-panel` were mock-only and were removed with it). If an admin surface is needed later, it belongs in a Supabase-backed `profiles`/`roles` table with RLS, not client-side role-checking.
 
 ## Scope check before adding features
 
