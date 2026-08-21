@@ -57,16 +57,6 @@ module.exports = async (req, res) => {
     return;
   }
 
-  var budget = usageBudget.checkBudget("reviews-monthly", MONTHLY_BUDGET, "month");
-  if (!budget.allowed) {
-    res.status(429).json({
-      error: "이번 달 제공되는 무료 리뷰 조회 사용량을 모두 사용했어요. " + usageBudget.formatResetKst(budget.resetAt) + " 다시 이용하실 수 있어요.",
-      reason: "monthly_budget_exceeded",
-      resetAt: budget.resetAt.toISOString()
-    });
-    return;
-  }
-
   var name = req.query && req.query.name;
   var latRaw = req.query && req.query.lat;
   var lngRaw = req.query && req.query.lng;
@@ -81,6 +71,19 @@ module.exports = async (req, res) => {
   var googleKey = process.env.GOOGLE_PLACES_API_KEY;
   if (!googleKey) {
     res.status(500).json({ error: "GOOGLE_PLACES_API_KEY가 서버에 설정되어 있지 않습니다." });
+    return;
+  }
+
+  // Checked last, right before the real Google call: a malformed request or
+  // a missing server key should never consume budget for a call that was
+  // never going to happen.
+  var budget = usageBudget.checkBudget("reviews-monthly", MONTHLY_BUDGET, "month");
+  if (!budget.allowed) {
+    res.status(429).json({
+      error: "이번 달 제공되는 무료 리뷰 조회 사용량을 모두 사용했어요. " + usageBudget.formatResetKst(budget.resetAt) + " 다시 이용하실 수 있어요.",
+      reason: "monthly_budget_exceeded",
+      resetAt: budget.resetAt.toISOString()
+    });
     return;
   }
 
