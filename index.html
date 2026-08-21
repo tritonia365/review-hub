@@ -67,6 +67,10 @@
   --rt-red-wash:     #FDECEA;
   --rt-green:        #00A699;
   --rt-green-wash:   #E3F7F5;
+  /* "보통" 중립 표시 전용 — --rt-yellow는 화면당 1개, CTA/활성 필터 전용으로 예약되어 있어
+     (DESIGN_2.md §13) 여기서는 채도를 낮춘 별도 톤을 쓴다. */
+  --rt-neutral:      #B98A2E;
+  --rt-neutral-wash: #F5ECDA;
 
   /* Type — one confident sans system-wide, headings and body alike */
   --rt-font-display: "Pretendard Variable", Pretendard, -apple-system,
@@ -1073,6 +1077,60 @@ button, a.btn, .faq-q { min-height: 44px; }
 .rt-search-card-link { font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--rt-ink); text-decoration: underline; text-underline-offset: 2px; }
 .rt-search-card-save { margin-top: 12px; align-self: flex-start; height: 40px; padding: 0 18px; border-radius: var(--rt-radius-full); }
 .rt-search-card-save.is-saved { background: var(--rt-yellow); color: #FFFFFF; border-color: var(--rt-yellow); }
+.rt-search-card { cursor: pointer; }
+.rt-review-panel { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rt-line-soft); cursor: default; }
+.rt-review-panel[hidden] { display: none; }
+.rt-review-status { font-size: 13px; color: var(--rt-ink-50); margin: 0; }
+.rt-review-place-name { font-size: 14px; font-weight: 700; margin: 0 0 4px; color: var(--rt-ink); }
+.rt-review-rating { font-size: 13px; font-weight: 600; color: var(--rt-ink-70); margin: 0 0 10px; }
+.rt-review-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; max-height: 260px; overflow-y: auto; }
+.rt-review-item { padding: 10px 12px; background: var(--rt-paper-deep); border-radius: var(--rt-radius-md); }
+.rt-review-item-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.rt-review-author { font-size: 12px; font-weight: 700; color: var(--rt-ink); }
+.rt-review-item-rating { font-size: 12px; font-weight: 600; color: var(--rt-ink-70); }
+.rt-review-time { font-size: 11px; color: var(--rt-ink-50); margin-left: auto; }
+.rt-review-text { font-size: 13px; color: var(--rt-ink-70); margin: 4px 0 0; line-height: 1.5; }
+.rt-review-empty { font-size: 13px; color: var(--rt-ink-50); margin: 0; }
+.rt-review-maps-link { display: inline-block; margin-top: 12px; font-size: 13px; font-weight: 600; color: var(--rt-ink); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ---- AI 리뷰 분석 (Gemini, api/analyze.js 경유) ---- */
+.rt-ai-section { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--rt-line-soft); }
+.rt-ai-label { font-size: 11px; font-weight: 700; color: var(--rt-ink-50); text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 10px; }
+.rt-ai-status { font-size: 13px; color: var(--rt-ink-50); margin: 0; }
+
+.rt-ai-sentiment-bar { display: flex; height: 10px; border-radius: var(--rt-radius-full); overflow: hidden; background: var(--rt-line-soft); }
+.rt-ai-sentiment-seg { height: 100%; }
+.rt-ai-sentiment-seg.is-positive { background: var(--rt-green); }
+.rt-ai-sentiment-seg.is-neutral { background: var(--rt-neutral); }
+.rt-ai-sentiment-seg.is-negative { background: var(--rt-red); }
+.rt-ai-sentiment-legend { list-style: none; margin: 10px 0 0; padding: 0; display: flex; gap: 14px; flex-wrap: wrap; }
+.rt-ai-sentiment-legend li { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--rt-ink-70); }
+.rt-ai-sentiment-legend .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.rt-ai-sentiment-legend .dot.is-positive { background: var(--rt-green); }
+.rt-ai-sentiment-legend .dot.is-neutral { background: var(--rt-neutral); }
+.rt-ai-sentiment-legend .dot.is-negative { background: var(--rt-red); }
+
+.rt-ai-cloud { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 14px 0 4px; min-height: 60px; }
+.rt-ai-cloud span { font-family: var(--rt-font-body); font-weight: 700; line-height: 1; }
+.rt-ai-cloud span.is-positive { color: var(--rt-green); }
+.rt-ai-cloud span.is-negative { color: var(--rt-red); }
+
+.rt-ai-summary { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; }
+.rt-ai-badge {
+  flex: none; width: 24px; height: 24px; margin-top: 2px; border-radius: var(--rt-radius-sm);
+  background: var(--rt-ink); color: var(--rt-paper-pure); font-size: 10px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; letter-spacing: 0.02em;
+}
+.rt-ai-bubble {
+  position: relative; flex: 1; margin: 0; padding: 12px 14px; border: 1px solid var(--rt-ink);
+  border-radius: var(--rt-radius-md); background: var(--rt-paper-pure);
+  font-size: 13px; font-weight: 600; color: var(--rt-ink); line-height: 1.55;
+}
+.rt-ai-bubble::before {
+  content: ""; position: absolute; left: -6px; top: 10px; width: 10px; height: 10px;
+  background: var(--rt-paper-pure); border-left: 1px solid var(--rt-ink); border-bottom: 1px solid var(--rt-ink);
+  transform: rotate(45deg);
+}
 </style>
 </head>
 <body>
@@ -2116,6 +2174,42 @@ button, a.btn, .faq-q { min-height: 44px; }
     });
   }
 
+  /* Google 리뷰 캐시 — 가게(placeId)별 공개 데이터라 사용자별 배열(SAVED_PLACES_KEY)과
+     달리 placeId -> 결과 맵으로 저장한다. TTL 없음: 한 번 조회한 가게는 이 브라우저에서
+     다시 API를 호출하지 않는다. */
+  var GOOGLE_REVIEWS_CACHE_KEY = "rt_google_reviews_cache";
+
+  function getGoogleReviewsCache() {
+    try { return JSON.parse(window.localStorage.getItem(GOOGLE_REVIEWS_CACHE_KEY) || "{}"); }
+    catch (e) { return {}; }
+  }
+  function setGoogleReviewsCache(map) {
+    try { window.localStorage.setItem(GOOGLE_REVIEWS_CACHE_KEY, JSON.stringify(map)); } catch (e) {}
+  }
+  function cacheGoogleReviewResult(placeId, result) {
+    var map = getGoogleReviewsCache();
+    map[placeId] = { found: result.found, place: result.place || null, fetchedAt: new Date().toISOString() };
+    setGoogleReviewsCache(map);
+  }
+
+  /* AI 리뷰 분석 캐시 — 같은 가게 리뷰는 내용이 바뀌지 않으므로 placeId -> 분석 결과 맵으로
+     저장한다. TTL 없음: 한 번 분석한 가게는 이 브라우저에서 Gemini를 다시 호출하지 않는다
+     (무료 사용량 절약). */
+  var AI_ANALYSIS_CACHE_KEY = "rt_ai_analysis_cache";
+
+  function getAiAnalysisCache() {
+    try { return JSON.parse(window.localStorage.getItem(AI_ANALYSIS_CACHE_KEY) || "{}"); }
+    catch (e) { return {}; }
+  }
+  function setAiAnalysisCache(map) {
+    try { window.localStorage.setItem(AI_ANALYSIS_CACHE_KEY, JSON.stringify(map)); } catch (e) {}
+  }
+  function cacheAiAnalysisResult(placeId, analysis) {
+    var map = getAiAnalysisCache();
+    map[placeId] = { sentiment: analysis.sentiment, keywords: analysis.keywords, summary: analysis.summary, fetchedAt: new Date().toISOString() };
+    setAiAnalysisCache(map);
+  }
+
   var rtSearchForm = document.getElementById("rt-search-form");
   var rtSearchInput = document.getElementById("rt-search-input");
   var rtSearchChips = document.getElementById("rt-search-chips");
@@ -2173,7 +2267,9 @@ button, a.btn, .faq-q { min-height: 44px; }
           categoryName: d.category_name,
           roadAddress: d.road_address_name || d.address_name,
           phone: d.phone || "전화번호 정보 없음",
-          placeUrl: d.place_url
+          placeUrl: d.place_url,
+          lat: d.y ? parseFloat(d.y) : null,
+          lng: d.x ? parseFloat(d.x) : null
         };
       });
       rtSearchStatus.textContent = rtLastResults.length === 0
@@ -2198,7 +2294,8 @@ button, a.btn, .faq-q { min-height: 44px; }
         "<p class=\"rt-search-card-addr\">" + escapeHtml(place.roadAddress) + "</p>" +
         "<p class=\"rt-search-card-phone\">" + escapeHtml(place.phone) + "</p>" +
         "<a class=\"rt-search-card-link\" href=\"" + escapeHtml(place.placeUrl) + "\" target=\"_blank\" rel=\"noopener noreferrer\">카카오맵에서 보기</a>" +
-        "<button type=\"button\" class=\"btn btn-secondary rt-search-card-save\">" + (saved ? "담음" : "담기") + "</button>";
+        "<button type=\"button\" class=\"btn btn-secondary rt-search-card-save\">" + (saved ? "담음" : "담기") + "</button>" +
+        "<div class=\"rt-review-panel\" hidden><div class=\"rt-review-panel-inner\"></div></div>";
       var saveBtn = card.querySelector(".rt-search-card-save");
       if (saved) saveBtn.classList.add("is-saved");
       saveBtn.addEventListener("click", function () {
@@ -2208,8 +2305,213 @@ button, a.btn, .faq-q { min-height: 44px; }
         saveBtn.textContent = nowSaved ? "담음" : "담기";
         saveBtn.classList.toggle("is-saved", nowSaved);
       });
+      card.addEventListener("click", function (e) {
+        if (e.target.closest("a, button")) return;
+        rtToggleReviewPanel(card, place);
+      });
       rtSearchGrid.appendChild(card);
     });
+  }
+
+  /* ---- Google 리뷰 패널 (Places API New, api/reviews.js 경유) ---- */
+
+  function rtToggleReviewPanel(card, place) {
+    var panel = card.querySelector(".rt-review-panel");
+    if (!panel) return;
+    var willOpen = panel.hasAttribute("hidden");
+    if (willOpen) {
+      panel.removeAttribute("hidden");
+      if (!panel.getAttribute("data-rt-loaded")) {
+        panel.setAttribute("data-rt-loaded", "1");
+        rtLoadReviews(panel.querySelector(".rt-review-panel-inner"), place);
+      }
+    } else {
+      panel.setAttribute("hidden", "");
+    }
+  }
+
+  async function rtLoadReviews(panelInner, place) {
+    if (typeof place.lat !== "number" || typeof place.lng !== "number" || !isFinite(place.lat) || !isFinite(place.lng)) {
+      rtRenderReviewPanel(panelInner, "no-coords");
+      return;
+    }
+
+    var cached = getGoogleReviewsCache()[place.placeId];
+    if (cached) {
+      rtRenderReviewPanel(panelInner, cached.found ? "loaded" : "not-found", cached.place, place.placeId);
+      return;
+    }
+
+    rtRenderReviewPanel(panelInner, "loading");
+
+    var url = "/api/reviews?name=" + encodeURIComponent(place.placeName) +
+      "&lat=" + encodeURIComponent(place.lat) + "&lng=" + encodeURIComponent(place.lng);
+
+    try {
+      var res = await fetch(url);
+      if (!res.ok) {
+        rtRenderReviewPanel(panelInner, res.status === 500 ? "not-configured" : "error");
+        return;
+      }
+      var data = await res.json();
+      if (data && data.found) {
+        cacheGoogleReviewResult(place.placeId, { found: true, place: data.place });
+        rtRenderReviewPanel(panelInner, "loaded", data.place, place.placeId);
+      } else {
+        cacheGoogleReviewResult(place.placeId, { found: false, place: null });
+        rtRenderReviewPanel(panelInner, "not-found");
+      }
+    } catch (err) {
+      rtRenderReviewPanel(panelInner, "error");
+    }
+  }
+
+  function rtRenderReviewPanel(panelInner, state, place, placeId) {
+    if (state === "loading") {
+      panelInner.innerHTML = "<p class=\"rt-review-status\">리뷰를 불러오는 중...</p>";
+      return;
+    }
+    if (state === "no-coords") {
+      panelInner.innerHTML = "<p class=\"rt-review-status\">위치 정보가 없어 리뷰를 찾을 수 없어요.</p>";
+      return;
+    }
+    if (state === "not-found") {
+      panelInner.innerHTML = "<p class=\"rt-review-status\">이 가게의 Google 리뷰를 찾을 수 없어요.</p>";
+      return;
+    }
+    if (state === "not-configured") {
+      panelInner.innerHTML = "<p class=\"rt-review-status\">리뷰 기능이 아직 설정되지 않았어요. Vercel 프로젝트의 환경변수(GOOGLE_PLACES_API_KEY)를 확인해주세요.</p>";
+      return;
+    }
+    if (state === "error") {
+      panelInner.innerHTML = "<p class=\"rt-review-status\">리뷰를 불러오지 못했어요. 잠시 후 다시 시도해주세요.</p>";
+      return;
+    }
+
+    // state === "loaded"
+    var ratingLine = place.rating != null
+      ? "★ " + place.rating + " · 리뷰 " + place.reviewCount + "개"
+      : "평점 정보 없음 · 리뷰 " + place.reviewCount + "개";
+
+    var reviewsHtml;
+    if (place.reviews && place.reviews.length > 0) {
+      reviewsHtml = place.reviews.map(function (r) {
+        return "<li class=\"rt-review-item\">" +
+          "<div class=\"rt-review-item-head\">" +
+          "<span class=\"rt-review-author\">" + escapeHtml(r.author) + "</span>" +
+          (r.rating != null ? "<span class=\"rt-review-item-rating numeric\">★ " + escapeHtml(r.rating) + "</span>" : "") +
+          "<span class=\"rt-review-time\">" + escapeHtml(r.relativeTime) + "</span>" +
+          "</div>" +
+          "<p class=\"rt-review-text\">" + escapeHtml(r.text) + "</p>" +
+          "</li>";
+      }).join("");
+    } else {
+      reviewsHtml = "";
+    }
+
+    var hasReviews = place.reviews && place.reviews.length > 0;
+
+    panelInner.innerHTML =
+      "<h4 class=\"rt-review-place-name\">" + escapeHtml(place.name) + "</h4>" +
+      "<p class=\"rt-review-rating numeric\">" + escapeHtml(ratingLine) + "</p>" +
+      (reviewsHtml
+        ? "<ul class=\"rt-review-list\">" + reviewsHtml + "</ul>"
+        : "<p class=\"rt-review-empty\">아직 작성된 리뷰가 없어요.</p>") +
+      (place.mapsUri
+        ? "<a class=\"rt-review-maps-link\" href=\"" + escapeHtml(place.mapsUri) + "\" target=\"_blank\" rel=\"noopener noreferrer\">Google 지도에서 모든 리뷰 보기</a>"
+        : "") +
+      // 리뷰가 하나도 없으면 분석 영역 자체를 렌더링하지 않는다 (분석 시도 금지).
+      (hasReviews
+        ? "<div class=\"rt-ai-section\"><p class=\"rt-ai-label\">AI 리뷰 분석</p><div class=\"rt-ai-body\"></div></div>"
+        : "");
+
+    if (hasReviews) {
+      rtLoadAiAnalysis(panelInner.querySelector(".rt-ai-body"), placeId, place.name, place.reviews);
+    }
+  }
+
+  /* ---- AI 리뷰 분석 (Gemini, api/analyze.js 경유) ---- */
+
+  async function rtLoadAiAnalysis(aiBody, placeId, placeName, reviews) {
+    if (!aiBody) return;
+
+    var cached = getAiAnalysisCache()[placeId];
+    if (cached) {
+      rtRenderAiAnalysis(aiBody, "loaded", cached);
+      return;
+    }
+
+    rtRenderAiAnalysis(aiBody, "loading");
+
+    try {
+      var res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          placeName: placeName || "",
+          reviews: reviews.map(function (r) { return { rating: r.rating, text: r.text }; })
+        })
+      });
+      if (!res.ok) {
+        rtRenderAiAnalysis(aiBody, res.status === 500 ? "not-configured" : "error");
+        return;
+      }
+      var data = await res.json();
+      cacheAiAnalysisResult(placeId, data);
+      rtRenderAiAnalysis(aiBody, "loaded", data);
+    } catch (err) {
+      rtRenderAiAnalysis(aiBody, "error");
+    }
+  }
+
+  function rtRenderAiAnalysis(aiBody, state, data) {
+    if (state === "loading") {
+      aiBody.innerHTML = "<p class=\"rt-ai-status\">AI가 리뷰를 분석 하는 중...</p>";
+      return;
+    }
+    if (state === "not-configured") {
+      aiBody.innerHTML = "<p class=\"rt-ai-status\">AI 분석 기능이 아직 설정되지 않았어요. Vercel 프로젝트의 환경변수(GEMINI_API_KEY)를 확인해주세요.</p>";
+      return;
+    }
+    if (state === "error") {
+      aiBody.innerHTML = "<p class=\"rt-ai-status\">AI 분석을 불러오지 못했어요. 잠시 후 다시 시도해주세요.</p>";
+      return;
+    }
+
+    // state === "loaded"
+    var s = data.sentiment || { positive: 0, neutral: 0, negative: 0 };
+    var total = Math.max(1, (s.positive || 0) + (s.neutral || 0) + (s.negative || 0));
+    var pct = function (n) { return Math.round((n / total) * 1000) / 10; };
+
+    var barHtml =
+      "<div class=\"rt-ai-sentiment-bar\">" +
+      "<div class=\"rt-ai-sentiment-seg is-positive\" style=\"width:" + pct(s.positive) + "%\"></div>" +
+      "<div class=\"rt-ai-sentiment-seg is-neutral\" style=\"width:" + pct(s.neutral) + "%\"></div>" +
+      "<div class=\"rt-ai-sentiment-seg is-negative\" style=\"width:" + pct(s.negative) + "%\"></div>" +
+      "</div>" +
+      "<ul class=\"rt-ai-sentiment-legend\">" +
+      "<li><span class=\"dot is-positive\"></span>긍정 " + (s.positive || 0) + "</li>" +
+      "<li><span class=\"dot is-neutral\"></span>보통 " + (s.neutral || 0) + "</li>" +
+      "<li><span class=\"dot is-negative\"></span>부정 " + (s.negative || 0) + "</li>" +
+      "</ul>";
+
+    var keywords = Array.isArray(data.keywords) ? data.keywords : [];
+    var maxScore = keywords.reduce(function (m, k) { return Math.max(m, k.score || 1); }, 1);
+    var minSize = 13, maxSize = 30;
+    var cloudHtml = keywords.map(function (k) {
+      var scale = (k.score || 1) / maxScore;
+      var size = Math.round(minSize + (maxSize - minSize) * scale);
+      var cls = k.context === "negative" ? "is-negative" : "is-positive";
+      return "<span class=\"" + cls + "\" style=\"font-size:" + size + "px\" title=\"" + escapeHtml(k.score) + "/10\">" + escapeHtml(k.word) + "</span>";
+    }).join("");
+
+    var summaryHtml =
+      "<div class=\"rt-ai-summary\">" +
+      "<span class=\"rt-ai-badge\">AI</span>" +
+      "<p class=\"rt-ai-bubble\">" + escapeHtml(data.summary || "") + "</p>" +
+      "</div>";
+
+    aiBody.innerHTML = barHtml + "<div class=\"rt-ai-cloud\">" + cloudHtml + "</div>" + summaryHtml;
   }
 
   function rtSyncSaveButtons() {
